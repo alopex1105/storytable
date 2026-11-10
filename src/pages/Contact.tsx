@@ -1,5 +1,6 @@
 import { Layout } from "@/components/Layout";
-import { Mail, Phone, Instagram } from "lucide-react";
+import { Mail, Phone, Instagram, MapPin } from "lucide-react";
+import { profile } from "@/data/profile";
 
 const Contact = () => {
   return (
@@ -20,34 +21,43 @@ const Contact = () => {
             {/* Contact Info */}
             <div className="space-y-6 animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
               <a
-                href="mailto:hello@jordanstudio.com"
+                href={`mailto:${profile.email}`}
                 className="flex items-center gap-4 text-lg hover-highlight group"
               >
                 <Mail size={20} className="text-muted-foreground group-hover:text-accent transition-colors" />
-                <span>hello@jordanstudio.com</span>
+                <span>{profile.email}</span>
               </a>
 
-              <a
-                href="https://instagram.com/jordanstudio"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-4 text-lg hover-highlight group"
-              >
-                <Instagram size={20} className="text-muted-foreground group-hover:text-accent transition-colors" />
-                <span>@jordanstudio</span>
-              </a>
+              {profile.instagram && (
+                <a
+                  href={`https://instagram.com/${profile.instagram}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-4 text-lg hover-highlight group"
+                >
+                  <Instagram size={20} className="text-muted-foreground group-hover:text-accent transition-colors" />
+                  <span>@{profile.instagram}</span>
+                </a>
+              )}
 
-              <div className="flex items-center gap-4 text-lg text-muted-foreground">
-                <Phone size={20} />
-                <span>+55 11 9999-9999</span>
-              </div>
+              {profile.phone && (
+                <div className="flex items-center gap-4 text-lg text-muted-foreground">
+                  <Phone size={20} />
+                  <span>{profile.phone}</span>
+                </div>
+              )}
             </div>
 
             {/* Location */}
-            <div className="animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
-              <p className="text-label mb-2">Based in</p>
-              <p className="text-lg">São Paulo, Brazil</p>
-            </div>
+            {profile.location && (
+              <div className="animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
+                <p className="text-label mb-2">Based in</p>
+                <p className="text-lg flex items-center gap-3">
+                  <MapPin size={18} className="text-muted-foreground" />
+                  {profile.location}
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Image */}
