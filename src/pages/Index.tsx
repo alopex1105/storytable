@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { Layout } from "@/components/Layout";
 import { projects } from "@/data/projects";
+import { profile } from "@/data/profile";
 
 const Index = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -59,14 +60,14 @@ const Index = () => {
         {/* Centered Title - Overlaid */}
         <div className="absolute inset-0 flex items-center justify-center z-10">
           <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-display font-bold tracking-tight text-foreground">
-            Jordan Studio
+            {profile.name}
           </h1>
         </div>
 
         {/* Bio - Bottom Left */}
         <div className="absolute bottom-8 md:bottom-12 left-6 md:left-12 z-10 max-w-xs md:max-w-sm">
           <p className="text-sm md:text-base font-sans text-foreground/80 leading-relaxed">
-            Hi! I'm Jordan, an independent artist and designer specializing in brand identity, illustration, and visual design. I help brands tell their stories through thoughtful, distinctive creative work.
+            {profile.bio}
           </p>
         </div>
       </section>
