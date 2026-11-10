@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { profile } from "@/data/profile";
 
 interface FooterProps {
   variant?: "default" | "echelon";
@@ -13,12 +14,12 @@ export function Footer({ variant = "default" }: FooterProps) {
         {/* Main Footer Content */}
         <div className="container-wide py-12 md:py-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
-            {/* Location */}
+            {/* Studio */}
             <div className="space-y-3">
-              <p className="text-label">Location</p>
+              <p className="text-label">Studio</p>
               <div className="text-sm text-foreground space-y-1">
-                <p>São Paulo, SP</p>
-                <p>Brazil</p>
+                <p>{profile.name}</p>
+                <p className="text-muted-foreground">{profile.tagline}</p>
               </div>
             </div>
 
@@ -36,10 +37,21 @@ export function Footer({ variant = "default" }: FooterProps) {
             <div className="space-y-3">
               <p className="text-label">Contact</p>
               <div className="text-sm text-foreground space-y-1">
-                <a href="mailto:hello@jordanstudio.com" className="block hover:text-accent transition-colors">
-                  hello@jordanstudio.com
+                <a href={`mailto:${profile.email}`} className="block hover:text-accent transition-colors">
+                  {profile.email}
                 </a>
-                <p>+55 11 9999-9999</p>
+                {profile.instagram && (
+                  <a
+                    href={`https://instagram.com/${profile.instagram}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block hover:text-accent transition-colors"
+                  >
+                    @{profile.instagram}
+                  </a>
+                )}
+                {profile.phone && <p>{profile.phone}</p>}
+                {profile.location && <p className="text-muted-foreground">{profile.location}</p>}
               </div>
             </div>
 
@@ -61,7 +73,7 @@ export function Footer({ variant = "default" }: FooterProps) {
                 key={i}
                 className="font-display text-6xl md:text-8xl lg:text-[10rem] font-bold text-foreground mx-12"
               >
-                @JORDANSTUDIO
+                {profile.name.toUpperCase()}
               </span>
             ))}
           </div>
@@ -77,9 +89,9 @@ export function Footer({ variant = "default" }: FooterProps) {
         <div className="flex flex-col md:flex-row justify-between gap-8">
           {/* Left */}
           <div className="space-y-4">
-            <p className="font-display text-xl font-semibold">Jordan Studio</p>
+            <p className="font-display text-xl font-semibold">{profile.name}</p>
             <p className="text-muted-foreground text-sm">
-              Design & Illustration
+              {profile.tagline}
             </p>
           </div>
 
@@ -92,8 +104,8 @@ export function Footer({ variant = "default" }: FooterProps) {
 
           {/* Right */}
           <div className="text-sm text-muted-foreground">
-            <p>© {currentYear} Jordan Studio</p>
-            <p className="mt-1">São Paulo, Brazil</p>
+            <p>© {currentYear} {profile.name}</p>
+            {profile.location && <p className="mt-1">{profile.location}</p>}
           </div>
         </div>
       </div>
