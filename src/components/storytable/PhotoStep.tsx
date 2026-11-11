@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import { DEMO_PHOTO, DEMO_PHOTO_RESTORED } from "@/lib/demo";
 import { restorePhoto } from "@/lib/api";
 import { toResizedDataUrl } from "@/lib/image";
+import { primeSpeech } from "@/lib/speech";
 import type { Photo } from "@/lib/types";
 import { Actions, Bi, Button, Sample, Title, Working } from "./ui";
 
@@ -193,7 +194,10 @@ export function PhotoStep({ onReady }: { onReady: (photo: Photo) => void }) {
         <Button
           zh="開始聊這張照片"
           en="Start talking about this photo"
-          onClick={() => onReady(photo)}
+          onClick={() => {
+            primeSpeech();
+            onReady(photo);
+          }}
         />
         <Button
           variant="secondary"

@@ -1,4 +1,6 @@
-import { Share } from "lucide-react";
+import { Download, Share } from "lucide-react";
+import { useState } from "react";
+import { renderCard } from "@/lib/card";
 import type { AnalyzeResult, Names, Photo, Turn } from "@/lib/types";
 import { Actions, Bi, Button, Sample, Title, Working } from "./ui";
 
@@ -21,13 +23,48 @@ export function StoryStep({
 }) {
   const canShare = typeof navigator !== "undefined" && "share" in navigator;
 
+  const [working, setWorking] = useState(false);
+
+  async function cardFile(): Promise<File | null> {
+    if (!result) return null;
+    try {
+      const blob = await renderCard({
+        photo: photo.restored ?? photo.original,
+        story: result.story,
+        recipe: result.recipe,
+        elder: names.elder,
+      });
+      return new File([blob], "storytable.png", { type: "image/png" });
+    } catch {
+      return null;
+    }
+  }
+
+  async function download() {
+    setWorking(true);
+    const file = await cardFile();
+    setWorking(false);
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = file.name;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 10_000);
+  }
+
   async function share() {
     if (!result) return;
+    setWorking(true);
+    const file = await cardFile();
+    setWorking(false);
+    const text = [result.story.title_zh, ...result.story.lines_zh].join("\n");
     try {
-      await navigator.share({
-        title: result.story.title_zh,
-        text: [result.story.title_zh, ...result.story.lines_zh].join("\n"),
-      });
+      if (file && navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ files: [file], title: result.story.title_zh });
+      } else {
+        await navigator.share({ title: result.story.title_zh, text });
+      }
     } catch {
       // the person closed the share sheet
     }
@@ -144,15 +181,26 @@ export function StoryStep({
 
       <div className="pt-4" />
       <Actions sticky={false}>
-        {canShare && (
+        <div className={`grid gap-3 ${canShare ? "grid-cols-2" : ""}`}>
           <Button
             variant="secondary"
-            zh="分享"
-            en="Share"
-            icon={<Share aria-hidden size={24} strokeWidth={1.5} />}
-            onClick={share}
+            zh="下載圖片"
+            en="Download"
+            icon={<Download aria-hidden size={24} strokeWidth={1.5} />}
+            disabled={working}
+            onClick={download}
           />
-        )}
+          {canShare && (
+            <Button
+              variant="secondary"
+              zh="分享"
+              en="Share"
+              icon={<Share aria-hidden size={24} strokeWidth={1.5} />}
+              disabled={working}
+              onClick={share}
+            />
+          )}
+        </div>
         <Button
           zh={`接下來：給 ${names.child} 的筆記`}
           en={`Next: the note for ${names.child}`}

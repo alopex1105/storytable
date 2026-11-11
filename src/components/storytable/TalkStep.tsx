@@ -6,6 +6,7 @@ import { FALLBACK_QUESTIONS } from "@/lib/questions";
 import {
   canRecognize,
   createRecognition,
+  primeSpeech,
   speak,
   stopSpeaking,
   type Recognition,
@@ -35,6 +36,12 @@ export function TalkStep({
   const [voice, setVoice] = useState(true);
   const recognition = useRef<Recognition | null>(null);
   const started = useRef(false);
+  const wanted = useRef(false);
+  const latest = useRef("");
+
+  useEffect(() => {
+    latest.current = answer;
+  }, [answer]);
 
   const say = useCallback((q: Question) => {
     speak([q.ack_zh, q.question_zh].filter(Boolean).join(" "));
@@ -66,25 +73,28 @@ export function TalkStep({
 
   useEffect(
     () => () => {
+      wanted.current = false;
       recognition.current?.abort();
       stopSpeaking();
     },
     [],
   );
 
-  function toggleMic() {
-    if (listening) {
-      recognition.current?.stop();
-      return;
-    }
+  // The browser's recognition stops at every pause, and older adults pause
+  // often. Keep starting it again until the person taps the button to stop.
+  function listen(first: boolean) {
     const rec = createRecognition("zh-TW");
+    const giveUp = () => {
+      wanted.current = false;
+      setListening(false);
+      // If it never started, voice is not usable here; offer typing instead.
+      if (first) setVoice(false);
+    };
     if (!rec) {
-      setVoice(false);
+      giveUp();
       return;
     }
-    // Stop reading the question first, or the microphone hears it.
-    stopSpeaking();
-    const before = answer ? `${answer} ` : "";
+    const before = latest.current ? `${latest.current} ` : "";
     rec.onresult = (event) => {
       let heard = "";
       for (let i = 0; i < event.results.length; i++) {
@@ -93,24 +103,37 @@ export function TalkStep({
       setAnswer(before + heard);
     };
     rec.onerror = (event) => {
-      if (event.error !== "no-speech" && event.error !== "aborted") {
-        setVoice(false);
-      }
-      setListening(false);
+      if (event.error !== "no-speech" && event.error !== "aborted") giveUp();
     };
-    rec.onend = () => setListening(false);
+    rec.onend = () => {
+      if (wanted.current) listen(false);
+      else setListening(false);
+    };
     recognition.current = rec;
-    setListening(true);
     try {
       rec.start();
     } catch {
-      setListening(false);
-      setVoice(false);
+      giveUp();
     }
+  }
+
+  function toggleMic() {
+    if (listening) {
+      wanted.current = false;
+      recognition.current?.stop();
+      return;
+    }
+    // Stop reading the question first, or the microphone hears it.
+    stopSpeaking();
+    wanted.current = true;
+    setListening(true);
+    listen(true);
   }
 
   function submit(skipped: boolean) {
     if (!question) return;
+    primeSpeech();
+    wanted.current = false;
     recognition.current?.abort();
     stopSpeaking();
     setListening(false);

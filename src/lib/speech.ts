@@ -41,6 +41,21 @@ export function createRecognition(lang = "zh-TW"): Recognition | null {
   return rec;
 }
 
+/**
+ * Call from a tap. Phones only let a page speak if the first utterance starts
+ * inside a user gesture; the questions arrive later, after a network call.
+ */
+export function primeSpeech() {
+  if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+  try {
+    const silent = new SpeechSynthesisUtterance(" ");
+    silent.volume = 0;
+    window.speechSynthesis.speak(silent);
+  } catch {
+    // reading aloud is optional
+  }
+}
+
 export function stopSpeaking() {
   if (typeof window !== "undefined" && "speechSynthesis" in window) {
     window.speechSynthesis.cancel();
