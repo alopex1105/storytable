@@ -103,3 +103,25 @@ export async function coachReply(input: {
     source: "fixed",
   };
 }
+
+/** Natural speech for one line, or null to use the browser's own voice. */
+export async function speakAudio(text: string): Promise<Blob | null> {
+  if (!BASE || !KEY) return null;
+  try {
+    const response = await fetch(`${BASE}/functions/v1/speak`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        apikey: KEY,
+        ...(KEY.startsWith("sb_") ? {} : { Authorization: `Bearer ${KEY}` }),
+      },
+      body: JSON.stringify({ text }),
+      signal: AbortSignal.timeout(10_000),
+    });
+    if (!response.ok) return null;
+    if (!(response.headers.get("content-type") ?? "").startsWith("audio/")) return null;
+    return await response.blob();
+  } catch {
+    return null;
+  }
+}

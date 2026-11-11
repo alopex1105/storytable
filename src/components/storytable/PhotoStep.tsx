@@ -3,7 +3,7 @@ import { useRef, useState } from "react";
 import { restorePhoto } from "@/lib/api";
 import { DEMO_PHOTO, DEMO_PHOTO_RESTORED } from "@/lib/demo";
 import { toResizedDataUrl } from "@/lib/image";
-import { primeSpeech } from "@/lib/speech";
+import { primeVoice } from "@/lib/voice";
 import type { Photo } from "@/lib/types";
 import { Actions, Bi, Button, Sample, Title, Working } from "./ui";
 
@@ -234,7 +234,7 @@ export function PhotoStep({ onReady }: { onReady: (photo: Photo) => void }) {
             zh="開始聊這張照片"
             en="Start talking about this photo"
             onClick={() => {
-              primeSpeech();
+              primeVoice();
               onReady(photo);
             }}
           />
@@ -257,7 +257,7 @@ export function PhotoStep({ onReady }: { onReady: (photo: Photo) => void }) {
             zh="開始聊這張照片"
             en="Start talking about this photo"
             onClick={() => {
-              primeSpeech();
+              primeVoice();
               onReady(photo);
             }}
           />

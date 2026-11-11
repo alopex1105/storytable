@@ -21,10 +21,11 @@ npm run dev
   - `interview` asks an OpenAI model for the next question about the photo. The server decides which of the four topics comes next; if the model is unavailable, a fixed question is used.
   - `analyze` asks the model to record moments, a three-line story and the recipe as told. Quotes that do not appear in the transcript are dropped. `_shared/awareness.ts` then sets the note's level and wording with fixed rules.
   - `health` reports whether OpenAI and GMI Cloud answer. It never returns a key.
+  - `speak` turns each question into natural speech with OpenAI text-to-speech, steered toward a Taiwanese Mandarin voice. If it fails, the browser's built-in voice reads the question instead.
   - `coach` plays the parent so the family member can rehearse suggesting a check-up. After four turns it gives three opening lines; if the model is unavailable, fixed lines are shown (`skills/coach.md`).
 - The private note links to a doctor summary: one printable A4 page built in the browser from the note plus what the family types in. No model call, nothing stored.
-- Secrets (set in Lovable Cloud): `OPENAI_API_KEY`, `GMI_API_KEY`, and optionally `OPENAI_MODEL` and `OPENAI_MODEL_FAST`.
-- Voice uses the browser's built-in zh-TW speech synthesis and recognition. The microphone keeps listening across pauses until it is tapped again; typing always works.
+- Secrets (set in Lovable Cloud): `OPENAI_API_KEY`, `GMI_API_KEY`, and optionally `OPENAI_MODEL`, `OPENAI_MODEL_FAST`, `OPENAI_TTS_MODEL` and `OPENAI_TTS_VOICE`.
+- Listening uses the browser's built-in zh-TW speech recognition. The microphone keeps listening across pauses until it is tapped again; typing always works.
 - The story card can be saved or shared as one image, drawn in the browser (`src/lib/card.ts`).
 
 The interface follows the ui-de-ai rules: grayscale chrome (Radix sand) with colour left to the photos, four type sizes, one hairline token, nested radii on a 4px grid.

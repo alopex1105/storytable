@@ -6,11 +6,9 @@ import { FALLBACK_QUESTIONS } from "@/lib/questions";
 import {
   canRecognize,
   createRecognition,
-  primeSpeech,
-  speak,
-  stopSpeaking,
   type Recognition,
 } from "@/lib/speech";
+import { primeVoice, sayAloud, stopVoice } from "@/lib/voice";
 import type { InterviewResponse, Names, Photo, Turn } from "@/lib/types";
 import { Actions, Bi, Button, Working } from "./ui";
 
@@ -44,7 +42,7 @@ export function TalkStep({
   }, [answer]);
 
   const say = useCallback((q: Question) => {
-    speak([q.ack_zh, q.question_zh].filter(Boolean).join(" "));
+    sayAloud([q.ack_zh, q.question_zh].filter(Boolean).join(" "));
   }, []);
 
   const ask = useCallback(
@@ -52,7 +50,7 @@ export function TalkStep({
       setQuestion(null);
       const next = await nextQuestion(photo, soFar, names);
       if ("closing_zh" in next) {
-        speak(next.closing_zh);
+        sayAloud(next.closing_zh);
         onDone(soFar);
         return;
       }
@@ -75,7 +73,7 @@ export function TalkStep({
     () => () => {
       wanted.current = false;
       recognition.current?.abort();
-      stopSpeaking();
+      stopVoice();
     },
     [],
   );
@@ -124,7 +122,7 @@ export function TalkStep({
       return;
     }
     // Stop reading the question first, or the microphone hears it.
-    stopSpeaking();
+    stopVoice();
     wanted.current = true;
     setListening(true);
     listen(true);
@@ -132,10 +130,10 @@ export function TalkStep({
 
   function submit(skipped: boolean) {
     if (!question) return;
-    primeSpeech();
+    primeVoice();
     wanted.current = false;
     recognition.current?.abort();
-    stopSpeaking();
+    stopVoice();
     setListening(false);
     const turn: Turn = {
       q_zh: question.question_zh,
