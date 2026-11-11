@@ -1,78 +1,131 @@
-import { useState, useRef } from "react";
-import { Layout } from "@/components/Layout";
-import { projects } from "@/data/projects";
-import { profile } from "@/data/profile";
+import { useCallback, useEffect, useState } from "react";
+import { ConsentStep } from "@/components/storytable/ConsentStep";
+import { HandoffStep, NoteStep } from "@/components/storytable/NoteStep";
+import { PhotoStep } from "@/components/storytable/PhotoStep";
+import { StepBar } from "@/components/storytable/StepBar";
+import { StoryStep } from "@/components/storytable/StoryStep";
+import { TalkStep } from "@/components/storytable/TalkStep";
+import { analyzeTalk } from "@/lib/api";
+import { buildNote } from "@/lib/awareness";
+import { DEMO_NAMES, isDemoScript, SAMPLE_RECORDED } from "@/lib/demo";
+import type { AnalyzeResult, Names, Photo, Turn } from "@/lib/types";
 
-const Index = () => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const containerRef = useRef<HTMLDivElement>(null);
+type Step = "consent" | "photo" | "talk" | "story" | "handoff" | "note";
 
-  // Get 8 unique cover images from projects for the grid (4x2)
-  const gridImages = projects.slice(0, 8).map(p => p.coverImage);
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!containerRef.current) return;
-    
-    const rect = containerRef.current.getBoundingClientRect();
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    
-    // Calculate offset from center (normalized to -1 to 1)
-    const x = (e.clientX - rect.left - centerX) / centerX;
-    const y = (e.clientY - rect.top - centerY) / centerY;
-    
-    setMousePosition({ x, y });
-  };
-
-  return (
-    <Layout hideFooter noPadding>
-      <section 
-        ref={containerRef}
-        onMouseMove={handleMouseMove}
-        className="relative h-screen overflow-hidden"
-      >
-        {/* Image Grid Background with Parallax - 4 columns x 2 rows */}
-        <div 
-          className="absolute inset-0 flex items-center justify-center transition-transform duration-700 ease-out"
-          style={{
-            transform: `translate(${-mousePosition.x * 40}px, ${-mousePosition.y * 40}px)`,
-          }}
-        >
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10 p-12 md:p-16 w-full max-w-7xl">
-            {gridImages.map((image, index) => (
-              <div 
-                key={index}
-                className="aspect-[3/4] overflow-hidden"
-              >
-                <img
-                  src={image}
-                  alt=""
-                  className="w-full h-full object-cover opacity-60"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Overlay for better text readability */}
-        <div className="absolute inset-0 bg-background/30" />
-
-        {/* Centered Title - Overlaid */}
-        <div className="absolute inset-0 flex items-center justify-center z-10">
-          <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-display font-bold tracking-tight text-foreground">
-            {profile.name}
-          </h1>
-        </div>
-
-        {/* Bio - Bottom Left */}
-        <div className="absolute bottom-8 md:bottom-12 left-6 md:left-12 z-10 max-w-xs md:max-w-sm">
-          <p className="text-sm md:text-base font-sans text-foreground/80 leading-relaxed">
-            {profile.bio}
-          </p>
-        </div>
-      </section>
-    </Layout>
-  );
+const BAR: Record<Step, number> = {
+  consent: 0,
+  photo: 1,
+  talk: 2,
+  story: 3,
+  handoff: 4,
+  note: 4,
 };
 
-export default Index;
+// Everything lives in React state: a refresh clears the whole session.
+export default function Index() {
+  const [step, setStep] = useState<Step>("consent");
+  const [demo, setDemo] = useState(false);
+  const [names, setNames] = useState<Names>({ elder: "", child: "" });
+  const [photo, setPhoto] = useState<Photo | null>(null);
+  const [turns, setTurns] = useState<Turn[]>([]);
+  const [result, setResult] = useState<AnalyzeResult | null>(null);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [step]);
+
+  const analyze = useCallback(
+    async (all: Turn[]) => {
+      setFailed(false);
+      setResult(null);
+      try {
+        setResult(await analyzeTalk(all, names));
+      } catch {
+        if (demo && isDemoScript(all)) {
+          setResult({
+            ...SAMPLE_RECORDED,
+            note: buildNote(SAMPLE_RECORDED),
+            sample: true,
+          });
+        } else {
+          setFailed(true);
+        }
+      }
+    },
+    [demo, names],
+  );
+
+  const finishTalk = useCallback(
+    (all: Turn[]) => {
+      setTurns(all);
+      setStep("story");
+      analyze(all);
+    },
+    [analyze],
+  );
+
+  function agree() {
+    setNames({
+      elder: names.elder.trim() || (demo ? DEMO_NAMES.elder : "長輩"),
+      child: names.child.trim() || (demo ? DEMO_NAMES.child : "家人"),
+    });
+    setStep("photo");
+  }
+
+  function restart() {
+    setStep("consent");
+    setNames({ elder: "", child: "" });
+    setPhoto(null);
+    setTurns([]);
+    setResult(null);
+    setFailed(false);
+  }
+
+  return (
+    <main className="mx-auto flex min-h-dvh w-full max-w-[430px] flex-col px-5">
+      <StepBar current={BAR[step]} />
+
+      {step === "consent" && (
+        <ConsentStep
+          names={names}
+          onNames={setNames}
+          demo={demo}
+          onDemo={(on) => {
+            setDemo(on);
+            if (on) setNames(DEMO_NAMES);
+          }}
+          onAgree={agree}
+        />
+      )}
+      {step === "photo" && (
+        <PhotoStep
+          onReady={(picked) => {
+            setPhoto(picked);
+            setStep("talk");
+          }}
+        />
+      )}
+      {step === "talk" && photo && (
+        <TalkStep photo={photo} names={names} demo={demo} onDone={finishTalk} />
+      )}
+      {step === "story" && photo && (
+        <StoryStep
+          photo={photo}
+          names={names}
+          turns={turns}
+          result={result}
+          failed={failed}
+          onRetry={() => analyze(turns)}
+          onNext={() => setStep("handoff")}
+        />
+      )}
+      {step === "handoff" && (
+        <HandoffStep names={names} onOpen={() => setStep("note")} />
+      )}
+      {step === "note" && result && (
+        <NoteStep names={names} result={result} onRestart={restart} />
+      )}
+    </main>
+  );
+}

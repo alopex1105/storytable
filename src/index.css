@@ -95,133 +95,98 @@
     --sidebar-ring: 60 100% 50%;
   }
 
+
+  /*
+   * StoryTable tokens. The interface is grayscale; colour comes from the
+   * photos. Neutrals are Radix Colors "sand" used by its 12-step roles:
+   * 1 app background, 3 component fill, 5 pressed, 6-7 borders, 11 secondary
+   * text, 12 text. --live marks the live microphone and nothing else.
+   */
+  :root {
+    --sand-1: #fdfdfc;
+    --sand-2: #f9f9f8;
+    --sand-3: #f1f0ef;
+    --sand-4: #e9e8e6;
+    --sand-5: #e2e1de;
+    --sand-6: #dad9d6;
+    --sand-7: #cfceca;
+    --sand-8: #bcbbb5;
+    --sand-9: #8d8d86;
+    --sand-10: #82827c;
+    --sand-11: #63635e;
+    --sand-12: #21201c;
+    --surface: #ffffff;
+    --live: #e54d2e; /* Radix tomato 9 */
+    --hairline: 1px;
+  }
+
+  @media (min-resolution: 2dppx) {
+    :root {
+      --hairline: 0.5px;
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --sand-1: #111110;
+      --sand-2: #191918;
+      --sand-3: #222221;
+      --sand-4: #2a2a28;
+      --sand-5: #31312e;
+      --sand-6: #3b3a37;
+      --sand-7: #494844;
+      --sand-8: #62605b;
+      --sand-9: #6f6d66;
+      --sand-10: #7c7b74;
+      --sand-11: #b5b3ad;
+      --sand-12: #eeeeec;
+      --surface: #191918;
+    }
+  }
+
   * {
     @apply border-border;
   }
 
   html {
-    scroll-behavior: smooth;
+    background: var(--sand-1);
+    color-scheme: light dark;
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
-    font-family: 'Inter', sans-serif;
+    @apply font-sans antialiased;
+    background: var(--sand-1);
+    color: var(--sand-12);
+    font-size: 20px;
+    line-height: 1.6;
+    -webkit-text-size-adjust: 100%;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Syne', sans-serif;
-  }
-}
-
-@layer components {
-  .container-wide {
-    @apply mx-auto px-6 md:px-12 lg:px-20 xl:px-32;
-    max-width: 1600px;
+  button,
+  input,
+  textarea {
+    font: inherit;
+    color: inherit;
   }
 
-  .text-display {
-    @apply text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-bold tracking-tight;
-    font-family: 'Syne', sans-serif;
-  }
-
-  .text-headline {
-    @apply text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight;
-    font-family: 'Syne', sans-serif;
-  }
-
-  .text-label {
-    @apply text-xs md:text-sm uppercase tracking-widest text-muted-foreground;
-    font-family: 'Inter', sans-serif;
-  }
-
-  .hover-highlight {
-    @apply transition-colors duration-300;
-  }
-
-  .hover-highlight:hover {
-    color: hsl(var(--accent));
-  }
-
-  .link-underline {
-    @apply relative inline-block;
-  }
-
-  .link-underline::after {
-    content: '';
-    @apply absolute bottom-0 left-0 w-full h-px bg-current origin-left scale-x-0 transition-transform duration-300;
-  }
-
-  .link-underline:hover::after {
-    @apply scale-x-100;
-  }
-
-  .image-reveal {
-    @apply overflow-hidden;
-  }
-
-  .image-reveal img {
-    @apply transition-transform duration-700 ease-out;
-  }
-
-  .image-reveal:hover img {
-    @apply scale-105;
+  :focus-visible {
+    outline: 2px solid var(--sand-12);
+    outline-offset: 2px;
   }
 }
 
-@layer utilities {
-  .animate-fade-in {
-    animation: fade-in 0.6s ease-out forwards;
+@supports (corner-shape: superellipse(1.25)) {
+  .rounded-card {
+    corner-shape: superellipse(1.25);
   }
+}
 
-  .animate-fade-in-up {
-    animation: fade-in-up 0.6s ease-out forwards;
-  }
-
-  .animate-slide-in-right {
-    animation: slide-in-right 0.5s ease-out forwards;
-  }
-
-  .animate-marquee {
-    animation: marquee 30s linear infinite;
-  }
-
-  @keyframes fade-in {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-  @keyframes fade-in-up {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes slide-in-right {
-    from {
-      opacity: 0;
-      transform: translateX(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
-  @keyframes marquee {
-    from {
-      transform: translateX(0);
-    }
-    to {
-      transform: translateX(-50%);
-    }
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
   }
 }
