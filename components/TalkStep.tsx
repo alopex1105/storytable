@@ -1,5 +1,6 @@
 "use client";
 
+import { Mic, Square, Volume2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { DEMO_ANSWERS } from "@/lib/demo";
 import { fallbackNext, FALLBACK_QUESTIONS } from "@/lib/questions";
@@ -11,7 +12,7 @@ import {
   type Recognition,
 } from "@/lib/speech";
 import type { InterviewResponse, Names, Photo, Turn } from "@/lib/types";
-import { Button, Print, Spinner } from "./ui";
+import { Actions, Bi, Button, Working } from "./ui";
 
 type Question = Extract<InterviewResponse, { done: false }>;
 
@@ -74,6 +75,7 @@ export function TalkStep({
       }
       setAnswer("");
       setQuestion(next);
+      window.scrollTo(0, 0);
       say(next);
     },
     [photo, names, onDone, say],
@@ -148,117 +150,103 @@ export function TalkStep({
   }
 
   const index = turns.length;
+  const number = Math.min(index + 1, TOTAL);
 
   return (
-    <section className="-mb-8 flex flex-1 flex-col gap-4 pt-4">
-      <div className="flex items-center gap-4">
-        <Print
+    <section className="flex flex-1 flex-col pt-6">
+      <div className="flex items-end justify-between gap-4">
+        {/* eslint-disable-next-line @next/next/no-img-element -- in-memory data URL */}
+        <img
           src={photo.restored ?? photo.original}
           alt="正在聊的照片"
-          className="h-28 w-auto shrink-0"
+          className="h-32 w-auto rounded-tile"
         />
         <div
-          className="flex flex-col gap-2"
+          className="flex flex-col items-end gap-2"
           role="img"
-          aria-label={`第 ${Math.min(index + 1, TOTAL)} 題，共 ${TOTAL} 題`}
+          aria-label={`第 ${number} 題，共 ${TOTAL} 題`}
         >
-          <div className="flex gap-2">
+          <span className="text-sm text-muted tabular-nums">
+            {number} / {TOTAL}
+          </span>
+          <span className="flex gap-2">
             {Array.from({ length: TOTAL }, (_, i) => (
               <span
                 key={i}
-                className={`size-4 rounded-full ${
-                  i < index
-                    ? "bg-accent/45"
-                    : i === index
-                      ? "bg-accent"
-                      : "bg-line"
-                }`}
+                className={`size-2 rounded-full ${i <= index ? "bg-ink" : "bg-fill-press"}`}
               />
             ))}
-          </div>
-          <div className="text-lg text-sub">
-            第 {Math.min(index + 1, TOTAL)} 題
-            <span lang="en" className="block text-sm">
-              Question {Math.min(index + 1, TOTAL)} of {TOTAL}
-            </span>
-          </div>
+          </span>
         </div>
       </div>
 
       {!question ? (
-        <div
-          className="flex flex-1 flex-col items-center justify-center gap-4 text-center"
-          aria-live="polite"
-        >
-          <Spinner />
-          <div className="text-[22px]">
-            正在想下一個問題…
-            <span lang="en" className="block text-base text-sub">
-              Thinking of the next question…
-            </span>
-          </div>
+        <div className="mt-8 pb-8">
+          <Working zh="正在想下一個問題" en="Thinking of the next question" />
         </div>
       ) : (
         <>
-          <div aria-live="polite">
-            {question.ack_zh && (
-              <p className="text-[22px] text-sub">{question.ack_zh}</p>
-            )}
-            <h2 className="mt-1 font-serif text-[32px] leading-[1.35] font-semibold text-balance">
+          <div className="mt-6" aria-live="polite">
+            {question.ack_zh && <p className="text-muted">{question.ack_zh}</p>}
+            <h2 className="text-xl font-semibold text-balance">
               {question.question_zh}
             </h2>
-            <p lang="en" className="mt-2 text-base leading-snug text-sub">
+            <p lang="en" className="mt-2 text-sm text-muted">
               {[question.ack_en, question.question_en].filter(Boolean).join(" ")}
             </p>
-            <button
-              type="button"
-              className="mt-2 inline-flex min-h-11 items-center gap-2 text-lg text-accent-deep underline underline-offset-4"
-              onClick={() => say(question)}
-            >
-              <SpeakerIcon /> 再聽一次
-              <span lang="en" className="text-sm text-sub no-underline">
-                Hear it again
-              </span>
-            </button>
           </div>
 
+          <button
+            type="button"
+            className="mt-4 inline-flex h-12 items-center gap-2 self-start rounded-full bg-fill px-4 transition-transform duration-150 ease-out active:scale-[0.97] active:bg-fill-press"
+            onClick={() => say(question)}
+          >
+            <Volume2 aria-hidden size={24} strokeWidth={1.5} />
+            <span>再聽一次</span>
+            <span lang="en" className="text-sm text-muted">
+              Hear it again
+            </span>
+          </button>
+
           {voice ? (
-            <div className="flex flex-col items-center gap-2 py-1">
+            <div className="mt-8 flex items-center gap-4">
               <button
                 type="button"
                 onClick={toggleMic}
                 aria-pressed={listening}
-                className={`grid size-24 place-items-center rounded-full text-white transition ${
-                  listening ? "mic-live bg-accent-deep" : "bg-accent"
+                aria-label={listening ? "說完了" : "按一下開始說"}
+                className={`grid size-24 shrink-0 place-items-center rounded-full transition-transform duration-150 ease-out active:scale-[0.97] ${
+                  listening ? "bg-accent text-white" : "bg-ink text-bg"
                 }`}
               >
-                <MicIcon />
-                <span className="sr-only">
-                  {listening ? "說完了" : "按一下開始說"}
-                </span>
+                {listening ? (
+                  <Square aria-hidden size={32} strokeWidth={1.5} />
+                ) : (
+                  <Mic aria-hidden size={40} strokeWidth={1.5} />
+                )}
               </button>
-              <div className="text-center text-[22px] font-semibold">
-                {listening ? "我在聽，說完再按一下" : "按一下，開始說"}
-                <span lang="en" className="block text-base font-normal text-sub">
-                  {listening
-                    ? "Listening. Tap again when you finish"
-                    : "Tap to talk"}
-                </span>
-              </div>
+              <Bi
+                className="font-semibold"
+                zh={listening ? "我在聽，說完再按一下" : "按一下，開始說"}
+                en={
+                  listening
+                    ? "Listening. Tap again when you finish."
+                    : "Tap to talk"
+                }
+              />
             </div>
           ) : (
-            <p className="rounded-2xl bg-honey-soft px-4 py-3 text-honey">
-              這支手機現在不能用語音，請直接打字。
-              <span lang="en" className="block text-base">
-                Voice input isn&rsquo;t available here. Please type instead.
-              </span>
-            </p>
+            <Bi
+              className="mt-8"
+              zh="這支手機現在不能用語音，請直接打字。"
+              en="Voice input isn't available here. Please type instead."
+            />
           )}
 
-          <label className="block">
+          <label className="mt-6 block">
             <span className="sr-only">您的回答</span>
             <textarea
-              className="min-h-24 w-full rounded-2xl border-2 border-line bg-card p-4 text-[22px] leading-normal placeholder:text-sub/70"
+              className="block min-h-28 w-full rounded-card border-hairline border-line-strong bg-surface p-4 placeholder:text-muted"
               placeholder="說的話會出現在這裡，也可以直接打字"
               value={answer}
               onChange={(e) => setAnswer(e.target.value)}
@@ -268,14 +256,18 @@ export function TalkStep({
           {demo && (
             <button
               type="button"
-              className="-mt-2 min-h-11 self-start text-base text-accent-deep underline underline-offset-4"
+              className="mt-2 min-h-12 self-start text-sm underline underline-offset-4"
               onClick={() => setAnswer(DEMO_ANSWERS[index] ?? "")}
             >
-              填入示範回答 <span lang="en">· Demo answer</span>
+              填入示範回答
+              <span lang="en" className="ml-2 text-muted">
+                Fill in the demo answer
+              </span>
             </button>
           )}
 
-          <div className="sticky bottom-0 -mx-5 mt-auto grid grid-cols-[2fr_3fr] gap-3 bg-paper/95 px-5 pt-3 pb-4 backdrop-blur">
+          <div className="pt-2" />
+          <Actions columns>
             <Button
               variant="secondary"
               zh="跳過這題"
@@ -288,44 +280,9 @@ export function TalkStep({
               disabled={!answer.trim()}
               onClick={() => submit(false)}
             />
-          </div>
+          </Actions>
         </>
       )}
     </section>
-  );
-}
-
-function MicIcon() {
-  return (
-    <svg
-      aria-hidden
-      viewBox="0 0 24 24"
-      className="size-10"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect x="9" y="3" width="6" height="11" rx="3" />
-      <path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3M8.5 21h7" />
-    </svg>
-  );
-}
-
-function SpeakerIcon() {
-  return (
-    <svg
-      aria-hidden
-      viewBox="0 0 24 24"
-      className="size-6"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M4 9.5v5h3.5L12 18V6L7.5 9.5zM15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" />
-    </svg>
   );
 }

@@ -7,33 +7,29 @@ const STEPS = [
 ];
 
 export function StepBar({ current }: { current: number }) {
+  const step = STEPS[current];
   return (
-    <ol
-      className="grid grid-cols-5 gap-1.5"
-      aria-label={`第 ${current + 1} 步，共 5 步`}
-    >
-      {STEPS.map((step, i) => {
-        const state = i < current ? "done" : i === current ? "now" : "next";
-        return (
-          <li key={step.en} aria-current={state === "now" ? "step" : undefined}>
-            <div
-              className={`h-1.5 rounded-full ${
-                state === "next" ? "bg-line" : "bg-accent"
-              } ${state === "done" ? "opacity-45" : ""}`}
-            />
-            <div
-              className={`mt-1.5 text-center text-[15px] leading-tight ${
-                state === "now" ? "font-semibold text-ink" : "text-sub"
-              }`}
-            >
-              {step.zh}
-              <span lang="en" className="block text-[11px] font-normal text-sub">
-                {step.en}
-              </span>
-            </div>
-          </li>
-        );
-      })}
-    </ol>
+    <header className="pt-4">
+      <div className="flex items-baseline justify-between text-sm">
+        <span className="font-semibold">StoryTable 膳心人事</span>
+        <span className="text-muted">
+          {step.zh}
+          <span lang="en" className="ml-2">
+            {step.en}
+          </span>
+        </span>
+      </div>
+      <ol
+        className="mt-3 grid grid-cols-5 gap-1"
+        aria-label={`第 ${current + 1} 步，共 ${STEPS.length} 步：${step.zh}`}
+      >
+        {STEPS.map((s, i) => (
+          <li
+            key={s.en}
+            className={`h-1 rounded-full ${i <= current ? "bg-ink" : "bg-fill-press"}`}
+          />
+        ))}
+      </ol>
+    </header>
   );
 }

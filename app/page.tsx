@@ -91,13 +91,8 @@ export default function Home() {
   }
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-[430px] flex-col px-5 pt-4 pb-8">
-      <header>
-        <p className="mb-3 text-center text-base tracking-wide text-sub">
-          StoryTable <span className="font-serif">膳心人事</span>
-        </p>
-        <StepBar current={BAR[step]} />
-      </header>
+    <main className="mx-auto flex min-h-dvh w-full max-w-[430px] flex-col px-5">
+      <StepBar current={BAR[step]} />
 
       {step === "consent" && (
         <ConsentStep

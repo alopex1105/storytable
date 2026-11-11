@@ -1,26 +1,33 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
-/** Chinese first, English under it. */
+/** A screen title: Chinese first, English under it. */
+export function Title({ zh, en }: { zh: ReactNode; en: ReactNode }) {
+  return (
+    <div>
+      <h1 className="text-xl font-semibold text-balance">{zh}</h1>
+      <p lang="en" className="mt-1 text-sm text-muted">
+        {en}
+      </p>
+    </div>
+  );
+}
+
+/** Body text with its English under it. */
 export function Bi({
   zh,
   en,
   className = "",
-  enClassName = "",
 }: {
   zh: ReactNode;
   en: ReactNode;
   className?: string;
-  enClassName?: string;
 }) {
   return (
     <div className={className}>
-      <div>{zh}</div>
-      <div
-        lang="en"
-        className={`mt-1 text-base leading-snug font-normal text-sub ${enClassName}`}
-      >
+      <p>{zh}</p>
+      <p lang="en" className="mt-1 text-sm font-normal text-muted">
         {en}
-      </div>
+      </p>
     </div>
   );
 }
@@ -28,7 +35,7 @@ export function Bi({
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   zh: string;
   en: string;
-  variant?: "primary" | "secondary" | "quiet";
+  variant?: "primary" | "secondary";
   icon?: ReactNode;
 };
 
@@ -40,33 +47,20 @@ export function Button({
   className = "",
   ...rest
 }: ButtonProps) {
-  const look = {
-    primary:
-      "bg-accent text-white shadow-[0_2px_0_var(--color-accent-deep)] active:translate-y-px active:shadow-none disabled:bg-line disabled:text-sub disabled:shadow-none",
-    secondary:
-      "border-2 border-line bg-card text-ink active:bg-accent-soft disabled:text-sub",
-    quiet: "text-sub underline underline-offset-4 active:text-ink",
-  }[variant];
-  const enLook = {
-    primary: "text-white/85",
-    secondary: "text-sub",
-    quiet: "text-sub",
-  }[variant];
+  const look =
+    variant === "primary"
+      ? "bg-ink text-bg disabled:bg-fill disabled:text-muted"
+      : "bg-fill text-ink active:bg-fill-press disabled:text-muted";
   return (
     <button
       type="button"
-      className={`flex min-h-16 w-full items-center justify-center gap-3 rounded-2xl px-5 py-3 text-center transition ${look} ${className}`}
+      className={`flex min-h-16 w-full items-center justify-center gap-3 rounded-full px-6 py-2 text-center transition-transform duration-150 ease-out active:scale-[0.97] disabled:active:scale-100 ${look} ${className}`}
       {...rest}
     >
       {icon}
       <span>
-        <span className="block text-[22px] leading-tight font-semibold">
-          {zh}
-        </span>
-        <span
-          lang="en"
-          className={`mt-0.5 block text-sm leading-tight ${rest.disabled ? "text-sub" : enLook}`}
-        >
+        <span className="block leading-tight font-semibold">{zh}</span>
+        <span lang="en" className="block text-sm opacity-70">
           {en}
         </span>
       </span>
@@ -74,39 +68,60 @@ export function Button({
   );
 }
 
-export function Spinner({ className = "" }: { className?: string }) {
+/** The bottom action area. Sticky so the main button is always in reach. */
+export function Actions({
+  children,
+  sticky = true,
+  columns = false,
+}: {
+  children: ReactNode;
+  sticky?: boolean;
+  columns?: boolean;
+}) {
+  return (
+    <div
+      className={`-mx-5 mt-auto bg-bg px-5 pt-4 pb-6 ${sticky ? "sticky bottom-0" : ""}`}
+    >
+      <div
+        className={
+          columns ? "grid grid-cols-[2fr_3fr] gap-3" : "flex flex-col gap-3"
+        }
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
+export function Spinner() {
   return (
     <span
       aria-hidden
-      className={`inline-block size-7 animate-spin rounded-full border-[3px] border-accent/25 border-t-accent ${className}`}
+      className="inline-block size-6 shrink-0 animate-spin rounded-full border-2 border-line-strong border-t-ink"
     />
   );
 }
 
-export function Tag({ children }: { children: ReactNode }) {
+/** A line that says what the app is doing right now. */
+export function Working({ zh, en }: { zh: string; en: string }) {
   return (
-    <span className="inline-block rounded-full bg-honey-soft px-3 py-0.5 text-sm font-medium text-honey">
-      {children}
-    </span>
+    <div className="flex items-start gap-4" aria-live="polite">
+      <span className="mt-1">
+        <Spinner />
+      </span>
+      <Bi zh={zh} en={en} />
+    </div>
   );
 }
 
-/** A photo shown like a print: white border, soft shadow. */
-export function Print({
-  src,
-  alt,
-  className = "",
-}: {
-  src: string;
-  alt: string;
-  className?: string;
-}) {
+/** Marks bundled sample content so it is never mistaken for a live result. */
+export function Sample({ zh, en }: { zh: string; en: string }) {
   return (
-    // eslint-disable-next-line @next/next/no-img-element -- in-memory data URLs
-    <img
-      src={src}
-      alt={alt}
-      className={`block rounded-sm border-[6px] border-white bg-white object-cover shadow-[0_6px_18px_rgb(43_36_32/0.18)] ${className}`}
-    />
+    <p className="text-sm text-muted">
+      {zh}
+      <span lang="en" className="ml-2">
+        {en}
+      </span>
+    </p>
   );
 }
