@@ -213,8 +213,8 @@ export function PhotoStep({ onReady }: { onReady: (photo: Photo) => void }) {
             <Title zh="照片修好了" en="The photo is restored" />
             <Bi
               className="mt-4 text-sub"
-              zh="左右拖曳，看看修復前後。"
-              en="Drag left and right to compare."
+              zh="左右拖曳比較。修復後的照片由 AI 重繪，細節可能和原本略有不同。"
+              en="Drag to compare. The restored photo is redrawn by AI, so small details may differ from the original."
             />
           </>
         ) : (

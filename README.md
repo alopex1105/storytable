@@ -17,7 +17,7 @@ npm run dev
 
 - The whole flow is one screen that steps through consent, photo, talk, story card and note (`src/pages/Index.tsx`, `src/components/storytable/`).
 - The backend is four Supabase Edge Functions on Lovable Cloud (`supabase/functions/`). They hold the API keys; the browser never sees them.
-  - `restore` sends the photo to GMI Cloud (`bria-fibo-restore`) and returns the result. If that fails or takes over 35 seconds, the app carries on with the original photo.
+  - `restore` sends the photo to GMI Cloud. It first asks `gemini-3.1-flash-image` to remove damage and colorize; if that fails it tries `bria-fibo-restore`; if both fail, the app carries on with the original photo. The restored photo is redrawn by a model, so the app shows a before/after slider and says details may differ.
   - `interview` asks an OpenAI model for the next question about the photo. The server decides which of the four topics comes next; if the model is unavailable, a fixed question is used.
   - `analyze` asks the model to record moments, a three-line story and the recipe as told. Quotes that do not appear in the transcript are dropped. `_shared/awareness.ts` then sets the note's level and wording with fixed rules.
   - `health` reports whether OpenAI and GMI Cloud answer. It never returns a key.

@@ -39,10 +39,21 @@ async function call<T>(name: string, body: unknown, timeoutMs: number): Promise<
   return (await response.json()) as T;
 }
 
+/** Width over height, so the restored photo keeps the original's shape. */
+function imageRatio(src: string): Promise<number> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve(img.height ? img.width / img.height : 3 / 4);
+    img.onerror = () => resolve(3 / 4);
+    img.src = src;
+  });
+}
+
 /** The restored photo as a data URL, or null to carry on with the original. */
 export async function restorePhoto(image: string): Promise<string | null> {
   try {
-    const data = await call<{ restoredUrl?: unknown }>("restore", { image }, 50_000);
+    const ratio = await imageRatio(image);
+    const data = await call<{ restoredUrl?: unknown }>("restore", { image, ratio }, 85_000);
     return typeof data.restoredUrl === "string" ? data.restoredUrl : null;
   } catch {
     return null;
