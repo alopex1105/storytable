@@ -16,11 +16,17 @@ npm run dev
 ## How it works
 
 - The whole flow is one screen that steps through consent, photo, talk, story card and note (`src/pages/Index.tsx`, `src/components/storytable/`).
-- `src/lib/awareness.ts` sets the note's level and wording with fixed rules. A model only tags moments.
-- `src/lib/api.ts` calls the backend. Until the backend is connected, the app uses the original photo and four fixed questions, and demo mode shows sample data that is marked as such.
+- The backend is four Supabase Edge Functions on Lovable Cloud (`supabase/functions/`). They hold the API keys; the browser never sees them.
+  - `restore` sends the photo to GMI Cloud (`bria-fibo-restore`) and returns the result. If that fails or takes over 35 seconds, the app carries on with the original photo.
+  - `interview` asks an OpenAI model for the next question about the photo. The server decides which of the four topics comes next; if the model is unavailable, a fixed question is used.
+  - `analyze` asks the model to record moments, a three-line story and the recipe as told. Quotes that do not appear in the transcript are dropped. `_shared/awareness.ts` then sets the note's level and wording with fixed rules.
+  - `health` reports whether OpenAI and GMI Cloud answer. It never returns a key.
+- Secrets (set in Lovable Cloud): `OPENAI_API_KEY`, `GMI_API_KEY`, and optionally `OPENAI_MODEL`.
 - Voice uses the browser's built-in zh-TW speech synthesis and recognition; typing always works.
 
 The interface follows the ui-de-ai rules: grayscale chrome (Radix sand) with colour left to the photos, four type sizes, one hairline token, nested radii on a 4px grid.
+
+Rule tests: `npx vitest run tests`.
 
 ## Privacy
 

@@ -1,10 +1,10 @@
 # Prompts and awareness rules
 
-Source: section 6 of the MVP plan. `src/lib/awareness.ts` is the implementation of the rules below.
+Source: section 6 of the MVP plan. `supabase/functions/_shared/awareness.ts` is the implementation of the rules below.
 
 What runs differs from the plan text below in three ways:
 
-- The prompts for the backend are kept on the `nextjs-version` branch in `lib/prompts.ts` until the backend is connected. `claude-sonnet-5-5` does not accept a forced tool call, so both calls return structured JSON instead of calling `next_question` or `record_session`.
+- The prompts in use are in `supabase/functions/_shared/prompts.ts`. The model is called through the OpenAI Responses API with a strict JSON schema, so there is no `next_question` or `record_session` tool call.
 - The interview answer has two extra fields, `ack_zh` and `ack_en`, for the one-line reply before each question.
 - The note shows the helpline as 「關懷專線 0800-474-580」, because its full name contains a word the note never uses.
 
