@@ -1,3 +1,4 @@
+import { ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { coachReply } from "@/lib/api";
 import { COACH_TURNS, PERSONAS } from "@/lib/coach";
@@ -82,12 +83,20 @@ export function CoachStep({
               key={key}
               type="button"
               onClick={() => setPersona(key)}
-              className="min-h-16 rounded-card bg-fill px-5 py-4 text-left transition-transform duration-150 ease-out active:scale-[0.97] active:bg-fill-press"
+              className="flex min-h-16 items-center justify-between gap-3 rounded-card bg-fill px-5 py-4 text-left transition-[transform,background-color] duration-150 ease-out hover:bg-fill-hover active:scale-[0.98] active:bg-fill-press"
             >
-              <span className="block font-semibold">{PERSONAS[key].zh}</span>
-              <span lang="en" className="block text-sm text-sub">
-                {PERSONAS[key].en}
+              <span>
+                <span className="block font-semibold">{PERSONAS[key].zh}</span>
+                <span lang="en" className="block text-sm text-sub">
+                  {PERSONAS[key].en}
+                </span>
               </span>
+              <ChevronRight
+                aria-hidden
+                size={24}
+                strokeWidth={1.5}
+                className="shrink-0 text-sub"
+              />
             </button>
           ))}
         </div>
@@ -195,7 +204,7 @@ export function CoachStep({
           <label className="mt-6 block">
             <span className="sr-only">你想說的話</span>
             <textarea
-              className="block min-h-28 w-full rounded-card border-hairline border-line-strong bg-surface p-4 placeholder:text-sub"
+              className="block min-h-28 w-full rounded-card border-hairline border-line-strong bg-surface p-4 transition-colors duration-150 placeholder:text-sub hover:border-sub focus:border-ink"
               placeholder={`對${names.elder}說說看，例如：我想跟您聊一件事`}
               value={draft}
               onChange={(e) => setDraft(e.target.value)}

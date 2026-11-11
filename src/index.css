@@ -98,23 +98,22 @@
 
   /*
    * StoryTable tokens. The interface is grayscale; colour comes from the
-   * photos. Neutrals are Radix Colors "sand" used by its 12-step roles:
-   * 1 app background, 3 component fill, 5 pressed, 6-7 borders, 11 secondary
-   * text, 12 text. --live marks the live microphone and nothing else.
+   * photos. The neutrals start from Radix Colors "sand" and keep its roles
+   * (1 app background, 3-5 component fill / hover / pressed, 6-7 borders,
+   * 11 secondary text, 12 text), warmed to a paper tone in light and lifted
+   * to a soft charcoal in dark so the dark theme is calm rather than black.
+   * --live marks the live microphone and nothing else.
    */
   :root {
-    --sand-1: #fdfdfc;
-    --sand-2: #f9f9f8;
-    --sand-3: #f1f0ef;
-    --sand-4: #e9e8e6;
-    --sand-5: #e2e1de;
-    --sand-6: #dad9d6;
-    --sand-7: #cfceca;
-    --sand-8: #bcbbb5;
-    --sand-9: #8d8d86;
-    --sand-10: #82827c;
-    --sand-11: #63635e;
-    --sand-12: #21201c;
+    --sand-1: #f8f6f2;
+    --sand-2: #f3f1ec;
+    --sand-3: #eceae4;
+    --sand-4: #e4e1da;
+    --sand-5: #dbd8d0;
+    --sand-6: #e0ddd5;
+    --sand-7: #c9c5bb;
+    --sand-11: #66635b;
+    --sand-12: #1f1e1b;
     --surface: #ffffff;
     --live: #e54d2e; /* Radix tomato 9 */
     --hairline: 1px;
@@ -128,19 +127,16 @@
 
   @media (prefers-color-scheme: dark) {
     :root {
-      --sand-1: #111110;
-      --sand-2: #191918;
-      --sand-3: #222221;
-      --sand-4: #2a2a28;
-      --sand-5: #31312e;
-      --sand-6: #3b3a37;
-      --sand-7: #494844;
-      --sand-8: #62605b;
-      --sand-9: #6f6d66;
-      --sand-10: #7c7b74;
-      --sand-11: #b5b3ad;
-      --sand-12: #eeeeec;
-      --surface: #191918;
+      --sand-1: #262624;
+      --sand-2: #2b2b28;
+      --sand-3: #343431;
+      --sand-4: #3d3d39;
+      --sand-5: #474742;
+      --sand-6: #42413c;
+      --sand-7: #5c5b54;
+      --sand-11: #bab7ab;
+      --sand-12: #f1efe8;
+      --surface: #30302d;
     }
   }
 
@@ -191,6 +187,69 @@
   }
 }
 
+/*
+ * Frosted bars. Used in two places only: the top bar and, on phones, the
+ * bottom action bar, so content scrolling under them stays faintly visible.
+ * One layer each, never stacked.
+ */
+.bar-glass-top {
+  background: color-mix(in srgb, var(--sand-1) 76%, transparent);
+  -webkit-backdrop-filter: saturate(1.6) blur(18px);
+  backdrop-filter: saturate(1.6) blur(18px);
+  border-bottom: var(--hairline) solid var(--sand-6);
+}
+
+@media (max-width: 767px) {
+  .bar-glass {
+    background: color-mix(in srgb, var(--sand-1) 76%, transparent);
+    -webkit-backdrop-filter: saturate(1.6) blur(18px);
+    backdrop-filter: saturate(1.6) blur(18px);
+    border-top: var(--hairline) solid var(--sand-6);
+  }
+}
+
+/* A small frosted label that sits on a photo. */
+.chip-glass {
+  background: color-mix(in srgb, #1f1e1b 46%, transparent);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  color: #ffffff;
+}
+
+/* Each screen eases in; nothing else on the page moves on its own. */
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.enter {
+  animation: enter 250ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* The microphone shows it is listening. */
+@keyframes mic-ring {
+  from {
+    transform: scale(1);
+    opacity: 0.45;
+  }
+  to {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+.mic-live::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 9999px;
+  background: var(--live);
+  animation: mic-ring 1.6s ease-out infinite;
+}
+
 /* The doctor summary prints on one A4 page: always light, smaller type. */
 @media print {
   @page {
@@ -234,5 +293,9 @@
 
   .print-sheet textarea {
     resize: none;
+  }
+
+  .enter {
+    animation: none;
   }
 }

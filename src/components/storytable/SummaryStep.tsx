@@ -30,7 +30,7 @@ function Box({
         {en}
       </span>
       <textarea
-        className="mt-2 block min-h-24 w-full rounded-inner border-hairline border-line-strong bg-surface p-3 print:min-h-[20mm]"
+        className="mt-2 block min-h-24 w-full rounded-inner border-hairline border-line-strong bg-surface p-3 transition-colors duration-150 hover:border-sub focus:border-ink print:min-h-[20mm]"
         value={value}
         onChange={(e) => onChange(e.target.value)}
       />
@@ -55,7 +55,7 @@ export function SummaryStep({
 
   return (
     <section className="flex flex-1 flex-col pt-8 print:pt-0">
-      <div className="print-sheet flex flex-col gap-6 print:gap-4">
+      <div className="print-sheet flex flex-col gap-6 md:rounded-card md:border-hairline md:border-line md:bg-surface md:p-10 print:gap-4 print:border-0 print:p-0">
         <div>
           <h1 className="text-xl font-semibold">看診前摘要</h1>
           <p lang="en" className="mt-1 text-sm text-sub">

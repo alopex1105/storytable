@@ -2,6 +2,8 @@ import type { Config } from "tailwindcss";
 
 export default {
   darkMode: ["class"],
+  // Hover styles only on devices that can hover, so taps on a phone do not stick.
+  future: { hoverOnlyWhenSupported: true },
   content: [
     "./pages/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",
@@ -42,7 +44,7 @@ export default {
         // StoryTable: grayscale chrome (Radix sand); colour is left to photos.
         bg: "var(--sand-1)",
         surface: "var(--surface)",
-        fill: { DEFAULT: "var(--sand-3)", press: "var(--sand-5)" },
+        fill: { DEFAULT: "var(--sand-3)", hover: "var(--sand-4)", press: "var(--sand-5)" },
         line: { DEFAULT: "var(--sand-6)", strong: "var(--sand-7)" },
         sub: "var(--sand-11)",
         ink: "var(--sand-12)",

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { Names } from "@/lib/types";
-import { Actions, Button, Title } from "./ui";
+import { Actions, Button, Switch, Title } from "./ui";
 
 export function ConsentStep({
   names,
@@ -41,7 +41,7 @@ export function ConsentStep({
   }
 
   const input =
-    "mt-2 h-14 w-full rounded-full border-hairline border-line-strong bg-surface px-5 placeholder:text-sub";
+    "mt-2 h-14 w-full rounded-full border-hairline border-line-strong bg-surface px-5 transition-colors duration-150 placeholder:text-sub hover:border-sub focus:border-ink";
 
   return (
     <section className="flex flex-1 flex-col pt-8">
@@ -93,20 +93,14 @@ export function ConsentStep({
         </div>
       </fieldset>
 
-      <label className="mt-6 mb-4 flex items-center gap-3 text-sm">
-        <input
-          type="checkbox"
-          className="size-5 accent-[var(--sand-12)]"
-          checked={demo}
-          onChange={(e) => onDemo(e.target.checked)}
+      <div className="mt-6 mb-4">
+        <Switch
+          on={demo}
+          onChange={onDemo}
+          zh="示範模式"
+          en="Demo mode with a fictional family"
         />
-        <span>
-          示範模式
-          <span lang="en" className="ml-2 text-sub">
-            Demo mode with a fictional family
-          </span>
-        </span>
-      </label>
+      </div>
 
       <Actions columns>
         <Button

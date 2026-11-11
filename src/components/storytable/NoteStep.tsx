@@ -133,7 +133,7 @@ export function NoteStep({
             <li key={line.tel}>
               <a
                 href={`tel:${line.tel.replace(/-/g, "")}`}
-                className="flex min-h-16 items-center justify-between gap-3 rounded-full bg-fill px-6 active:bg-fill-press"
+                className="flex min-h-16 items-center justify-between gap-3 rounded-full bg-fill px-6 transition-colors duration-150 hover:bg-fill-hover active:bg-fill-press"
               >
                 <span className="leading-tight">
                   {line.zh}
