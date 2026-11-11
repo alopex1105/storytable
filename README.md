@@ -21,12 +21,26 @@ npm run dev
   - `interview` asks an OpenAI model for the next question about the photo. The server decides which of the four topics comes next; if the model is unavailable, a fixed question is used.
   - `analyze` asks the model to record moments, a three-line story and the recipe as told. Quotes that do not appear in the transcript are dropped. `_shared/awareness.ts` then sets the note's level and wording with fixed rules.
   - `health` reports whether OpenAI and GMI Cloud answer. It never returns a key.
-- Secrets (set in Lovable Cloud): `OPENAI_API_KEY`, `GMI_API_KEY`, and optionally `OPENAI_MODEL`.
+  - `coach` plays the parent so the family member can rehearse suggesting a check-up. After four turns it gives three opening lines; if the model is unavailable, fixed lines are shown (`skills/coach.md`).
+- The private note links to a doctor summary: one printable A4 page built in the browser from the note plus what the family types in. No model call, nothing stored.
+- Secrets (set in Lovable Cloud): `OPENAI_API_KEY`, `GMI_API_KEY`, and optionally `OPENAI_MODEL` and `OPENAI_MODEL_FAST`.
 - Voice uses the browser's built-in zh-TW speech synthesis and recognition; typing always works.
 
 The interface follows the ui-de-ai rules: grayscale chrome (Radix sand) with colour left to the photos, four type sizes, one hairline token, nested radii on a 4px grid.
 
 Rule tests: `npx vitest run tests`.
+
+## What's next
+
+StoryTable is the first probe of an awareness layer: notice change in everyday life, hand it to the right person, and make the next step doable. Built tonight: the photo conversation, the private note, the doctor summary (F2) and the conversation coach (F1). Planned, in order:
+
+- F3 Family observations and timeline: six questions for the warning signs one chat cannot show (1, 5, 7, 8, 9, 10). Questions need a neurologist's review first.
+- F4 Trend against oneself: a chat every four weeks, comparing with the last three. Needs accounts, encrypted storage and the older adult's own consent.
+- F6 Medicine signals: missed or doubled doses, with pharmacies.
+- F5 Money and scam guard: needs a bank partner.
+- F7 Risk-factor coaching: the 14 modifiable risk factors, with hearing checks and referral.
+
+StoryTable stays an awareness and communication tool. It does not screen or diagnose.
 
 ## Privacy
 

@@ -39,10 +39,14 @@ export function HandoffStep({
 export function NoteStep({
   names,
   result,
+  onSummary,
+  onCoach,
   onRestart,
 }: {
   names: Names;
   result: AnalyzeResult;
+  onSummary: () => void;
+  onCoach: () => void;
   onRestart: () => void;
 }) {
   const { note } = result;
@@ -163,6 +167,19 @@ export function NoteStep({
 
       <div className="pt-8" />
       <Actions sticky={false}>
+        <Button
+          zh="看診前摘要"
+          en="Doctor summary"
+          onClick={onSummary}
+        />
+        {note.level > 0 && (
+          <Button
+            variant="secondary"
+            zh="練習怎麼開口"
+            en="Practice the conversation"
+            onClick={onCoach}
+          />
+        )}
         <Button
           variant="secondary"
           zh="結束並清除"

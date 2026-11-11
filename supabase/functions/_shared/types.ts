@@ -79,3 +79,20 @@ export type Photo = {
   /** True when the restored image is the bundled demo one, not a live result. */
   sampleRestore?: boolean;
 };
+
+// --- Conversation coach (for the family member, after the note) ---
+
+export type Persona = "denies" | "worries" | "annoyed";
+
+export type CoachLine = { role: "child" | "elder"; text: string; text_en?: string };
+
+export type Opener = { zh: string; en: string };
+
+/** What the coach function returns for one turn. */
+export type CoachResponse = {
+  reply_zh: string;
+  reply_en: string;
+  done: boolean;
+  openers: Opener[];
+  source: "model" | "fixed";
+};

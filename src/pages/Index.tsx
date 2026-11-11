@@ -1,16 +1,26 @@
 import { useCallback, useEffect, useState } from "react";
+import { CoachStep } from "@/components/storytable/CoachStep";
 import { ConsentStep } from "@/components/storytable/ConsentStep";
 import { HandoffStep, NoteStep } from "@/components/storytable/NoteStep";
 import { PhotoStep } from "@/components/storytable/PhotoStep";
 import { StepBar } from "@/components/storytable/StepBar";
 import { StoryStep } from "@/components/storytable/StoryStep";
+import { SummaryStep } from "@/components/storytable/SummaryStep";
 import { TalkStep } from "@/components/storytable/TalkStep";
 import { analyzeTalk } from "@/lib/api";
 import { buildNote } from "@/lib/awareness";
 import { DEMO_NAMES, isDemoScript, SAMPLE_RECORDED } from "@/lib/demo";
 import type { AnalyzeResult, Names, Photo, Turn } from "@/lib/types";
 
-type Step = "consent" | "photo" | "talk" | "story" | "handoff" | "note";
+type Step =
+  | "consent"
+  | "photo"
+  | "talk"
+  | "story"
+  | "handoff"
+  | "note"
+  | "summary"
+  | "coach";
 
 const BAR: Record<Step, number> = {
   consent: 0,
@@ -19,6 +29,8 @@ const BAR: Record<Step, number> = {
   story: 3,
   handoff: 4,
   note: 4,
+  summary: 4,
+  coach: 4,
 };
 
 // Everything lives in React state: a refresh clears the whole session.
@@ -83,7 +95,7 @@ export default function Index() {
   }
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-[430px] flex-col px-5">
+    <main className="mx-auto flex min-h-dvh w-full max-w-[430px] flex-col px-5 print:min-h-0 print:max-w-none print:px-0">
       <StepBar current={BAR[step]} />
 
       {step === "consent" && (
@@ -124,7 +136,27 @@ export default function Index() {
         <HandoffStep names={names} onOpen={() => setStep("note")} />
       )}
       {step === "note" && result && (
-        <NoteStep names={names} result={result} onRestart={restart} />
+        <NoteStep
+          names={names}
+          result={result}
+          onSummary={() => setStep("summary")}
+          onCoach={() => setStep("coach")}
+          onRestart={restart}
+        />
+      )}
+      {step === "summary" && result && (
+        <SummaryStep
+          names={names}
+          result={result}
+          onBack={() => setStep("note")}
+        />
+      )}
+      {step === "coach" && result && (
+        <CoachStep
+          names={names}
+          result={result}
+          onBack={() => setStep("note")}
+        />
       )}
     </main>
   );

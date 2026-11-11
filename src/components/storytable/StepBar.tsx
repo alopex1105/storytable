@@ -9,7 +9,7 @@ const STEPS = [
 export function StepBar({ current }: { current: number }) {
   const step = STEPS[current];
   return (
-    <header className="pt-4">
+    <header className="pt-4 print:hidden">
       <div className="flex items-baseline justify-between text-sm">
         <span className="font-semibold">StoryTable 膳心人事</span>
         <span className="text-sub">

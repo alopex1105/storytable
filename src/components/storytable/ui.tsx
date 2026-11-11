@@ -80,7 +80,7 @@ export function Actions({
 }) {
   return (
     <div
-      className={`-mx-5 mt-auto bg-bg px-5 pt-4 pb-6 ${sticky ? "sticky bottom-0" : ""}`}
+      className={`-mx-5 mt-auto bg-bg px-5 pt-4 pb-6 print:hidden ${sticky ? "sticky bottom-0" : ""}`}
     >
       <div
         className={

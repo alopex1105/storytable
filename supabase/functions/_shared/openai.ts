@@ -3,7 +3,8 @@
 
 declare const Deno: { env: { get(name: string): string | undefined } };
 
-const API = "https://api.openai.com/v1/responses";
+// OPENAI_BASE_URL is only for tests and gateways; the default is OpenAI itself.
+const API = `${Deno.env.get("OPENAI_BASE_URL") || "https://api.openai.com/v1"}/responses`;
 
 export const MODEL = Deno.env.get("OPENAI_MODEL") || "gpt-6-astra";
 
@@ -31,6 +32,8 @@ export async function structured<T>(options: {
   name: string;
   schema: Record<string, unknown>;
   timeoutMs: number;
+  /** Overrides the default model, e.g. a faster one for the coach. */
+  model?: string;
 }): Promise<T> {
   const key = Deno.env.get("OPENAI_API_KEY");
   if (!key) throw new ModelError(0, "OPENAI_API_KEY is not set");
@@ -42,7 +45,7 @@ export async function structured<T>(options: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: MODEL,
+      model: options.model || MODEL,
       instructions: options.system,
       input: [{ role: "user", content: options.user }],
       text: {

@@ -2,8 +2,20 @@
 // hold the API keys. Until the backend is connected, every call takes its
 // fallback: the original photo, the fixed questions, and no analysis.
 
+import { FALLBACK_OPENERS } from "./coach";
 import { fallbackNext } from "./questions";
-import type { AnalyzeResult, InterviewResponse, Names, Photo, Turn } from "./types";
+import type {
+  AnalyzeResult,
+  CoachLine,
+  CoachResponse,
+  InterviewResponse,
+  Level,
+  MomentType,
+  Names,
+  Persona,
+  Photo,
+  Turn,
+} from "./types";
 
 const BASE = import.meta.env.VITE_SUPABASE_URL as string | undefined;
 const KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined;
@@ -17,7 +29,8 @@ async function call<T>(name: string, body: unknown, timeoutMs: number): Promise<
     headers: {
       "Content-Type": "application/json",
       apikey: KEY,
-      Authorization: `Bearer ${KEY}`,
+      // New-style project keys are opaque strings, not bearer tokens.
+      ...(KEY.startsWith("sb_") ? {} : { Authorization: `Bearer ${KEY}` }),
     },
     body: JSON.stringify(body),
     signal: AbortSignal.timeout(timeoutMs),
@@ -63,4 +76,30 @@ export async function analyzeTalk(turns: Turn[], names: Names): Promise<AnalyzeR
   const data = await call<AnalyzeResult>("analyze", { turns, names }, 58_000);
   if (!data.note || !data.story) throw new Error("incomplete analysis");
   return data;
+}
+
+/**
+ * One rehearsal turn. If the backend cannot answer, the rehearsal ends with
+ * the fixed opening lines, so the family member always leaves with three.
+ */
+export async function coachReply(input: {
+  level: Level;
+  moments: MomentType[];
+  persona: Persona;
+  history: CoachLine[];
+  names: Names;
+}): Promise<CoachResponse> {
+  try {
+    const data = await call<CoachResponse>("coach", input, 25_000);
+    if (typeof data.done === "boolean" && Array.isArray(data.openers)) return data;
+  } catch {
+    // fall through to the fixed lines
+  }
+  return {
+    reply_zh: "",
+    reply_en: "",
+    done: true,
+    openers: FALLBACK_OPENERS,
+    source: "fixed",
+  };
 }

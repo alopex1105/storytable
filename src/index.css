@@ -190,3 +190,49 @@
     animation-iteration-count: 1 !important;
   }
 }
+
+/* The doctor summary prints on one A4 page: always light, smaller type. */
+@media print {
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+
+  :root {
+    --sand-1: #ffffff;
+    --sand-3: #f1f0ef;
+    --sand-6: #bcbbb5;
+    --sand-7: #8d8d86;
+    --sand-11: #4a4a45;
+    --sand-12: #111110;
+    --surface: #ffffff;
+    --hairline: 0.5pt;
+  }
+
+  html,
+  body {
+    background: #ffffff;
+  }
+
+  body {
+    font-size: 10pt;
+    line-height: 1.4;
+  }
+
+  .print-sheet .text-xl {
+    font-size: 16pt;
+  }
+
+  .print-sheet .text-lg {
+    font-size: 12pt;
+  }
+
+  .print-sheet .text-sm {
+    font-size: 8pt;
+    line-height: 1.35;
+  }
+
+  .print-sheet textarea {
+    resize: none;
+  }
+}
