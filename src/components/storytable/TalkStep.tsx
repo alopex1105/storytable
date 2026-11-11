@@ -10,7 +10,8 @@ import {
 } from "@/lib/speech";
 import { primeVoice, sayAloud, stopVoice } from "@/lib/voice";
 import type { InterviewResponse, Names, Photo, Turn } from "@/lib/types";
-import { Actions, Bi, Button, Working } from "./ui";
+import { useLang } from "@/lib/lang";
+import { Actions, Bi, Button, Two, Working } from "./ui";
 
 type Question = Extract<InterviewResponse, { done: false }>;
 
@@ -27,6 +28,7 @@ export function TalkStep({
   demo: boolean;
   onDone: (turns: Turn[]) => void;
 }) {
+  const { lang } = useLang();
   const [turns, setTurns] = useState<Turn[]>([]);
   const [question, setQuestion] = useState<Question | null>(null);
   const [answer, setAnswer] = useState("");
@@ -184,13 +186,27 @@ export function TalkStep({
       ) : (
         <>
           <div key={question.question_zh} className="enter mt-6 lg:mt-0" aria-live="polite">
-            {question.ack_zh && <p className="text-sub">{question.ack_zh}</p>}
-            <h2 className="text-xl font-semibold text-balance">
-              {question.question_zh}
-            </h2>
-            <p lang="en" className="mt-2 text-sm text-sub">
-              {[question.ack_en, question.question_en].filter(Boolean).join(" ")}
-            </p>
+            {lang === "en" ? (
+              <>
+                {question.ack_en && <p className="text-sub">{question.ack_en}</p>}
+                <h2 lang="en" className="text-xl font-semibold text-balance">
+                  {question.question_en}
+                </h2>
+                <p className="mt-2 text-sm text-sub">
+                  {[question.ack_zh, question.question_zh].filter(Boolean).join(" ")}
+                </p>
+              </>
+            ) : (
+              <>
+                {question.ack_zh && <p className="text-sub">{question.ack_zh}</p>}
+                <h2 className="text-xl font-semibold text-balance">
+                  {question.question_zh}
+                </h2>
+                <p lang="en" className="mt-2 text-sm text-sub">
+                  {[question.ack_en, question.question_en].filter(Boolean).join(" ")}
+                </p>
+              </>
+            )}
           </div>
 
           <button
@@ -199,9 +215,8 @@ export function TalkStep({
             onClick={() => say(question)}
           >
             <Volume2 aria-hidden size={24} strokeWidth={1.5} />
-            <span>再聽一次</span>
-            <span lang="en" className="text-sm text-sub">
-              Hear it again
+            <span>
+              <Two zh="再聽一次" en="Hear it again" />
             </span>
           </button>
 
@@ -246,7 +261,11 @@ export function TalkStep({
             <span className="sr-only">您的回答</span>
             <textarea
               className="block min-h-28 w-full rounded-card border-hairline border-line-strong bg-surface p-4 transition-[border-color,box-shadow] duration-150 placeholder:text-sub hover:border-sub focus:border-ink focus:shadow-[0_0_0_1px_var(--sand-12)] focus-visible:outline-none"
-              placeholder="說的話會出現在這裡，也可以直接打字"
+              placeholder={
+                lang === "en"
+                  ? "What you say appears here. You can also type."
+                  : "說的話會出現在這裡，也可以直接打字"
+              }
               value={answer}
               onChange={(e) => setAnswer(e.target.value)}
             />

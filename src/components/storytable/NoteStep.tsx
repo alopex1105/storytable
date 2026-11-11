@@ -8,7 +8,7 @@ import {
   SIGNS_LINK,
 } from "@/lib/awareness";
 import type { AnalyzeResult, Names } from "@/lib/types";
-import { Actions, Bi, Button, Sample, Title } from "./ui";
+import { Actions, Bi, Button, Sample, Stack, Title, Two } from "./ui";
 
 export function HandoffStep({
   names,
@@ -93,10 +93,7 @@ export function NoteStep({
                 className="rounded-card border-hairline border-line bg-surface p-5"
               >
                 <p className="text-sm text-sub">
-                  第 {item.turn} 題
-                  <span lang="en" className="ml-2">
-                    Question {item.turn}
-                  </span>
+                  <Two zh={`第 ${item.turn} 題`} en={`Question ${item.turn}`} />
                 </p>
                 <blockquote className="mt-2 text-lg">「{item.quote}」</blockquote>
                 <Bi
@@ -108,10 +105,10 @@ export function NoteStep({
                 <ul className="mt-4 flex flex-col gap-2 text-sm text-sub">
                   {item.signs.map((sign) => (
                     <li key={sign}>
-                      十大警訊第 {sign} 項：{SIGNS[sign].zh}
-                      <span lang="en" className="block">
-                        Warning sign {sign}: {SIGNS[sign].en}
-                      </span>
+                      <Stack
+                        zh={`十大警訊第 ${sign} 項：${SIGNS[sign].zh}`}
+                        en={`Warning sign ${sign}: ${SIGNS[sign].en}`}
+                      />
                     </li>
                   ))}
                 </ul>
@@ -136,10 +133,7 @@ export function NoteStep({
                 className="flex min-h-16 items-center justify-between gap-3 rounded-full bg-fill px-6 transition-colors duration-150 hover:bg-fill-hover active:bg-fill-press"
               >
                 <span className="leading-tight">
-                  {line.zh}
-                  <span lang="en" className="block text-sm text-sub">
-                    {line.en}
-                  </span>
+                  <Stack zh={line.zh} en={line.en} />
                 </span>
                 <span className="font-semibold tabular-nums">{line.tel}</span>
               </a>
@@ -152,10 +146,7 @@ export function NoteStep({
           rel="noreferrer"
           className="mt-4 block underline underline-offset-4"
         >
-          {SIGNS_LINK.zh}
-          <span lang="en" className="block text-sm text-sub">
-            {SIGNS_LINK.en}
-          </span>
+          <Stack zh={SIGNS_LINK.zh} en={SIGNS_LINK.en} />
         </a>
       </div>
 

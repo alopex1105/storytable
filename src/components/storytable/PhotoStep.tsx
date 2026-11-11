@@ -5,13 +5,15 @@ import { DEMO_PHOTO, DEMO_PHOTO_RESTORED } from "@/lib/demo";
 import { toResizedDataUrl } from "@/lib/image";
 import { primeVoice } from "@/lib/voice";
 import type { Photo } from "@/lib/types";
-import { Actions, Bi, Button, Sample, Title, Working } from "./ui";
+import { useLang } from "@/lib/lang";
+import { Actions, Bi, Button, Sample, Stack, Title, Working } from "./ui";
 
 type Status = "idle" | "restoring" | "done" | "error";
 
 /** Drag the handle to compare the photo before and after. */
 function Compare({ before, after }: { before: string; after: string }) {
   const [split, setSplit] = useState(50);
+  const en1 = useLang().lang === "en";
   return (
     <div className="relative overflow-hidden rounded-card select-none">
       <img src={after} alt="修復後的照片" className="block w-full" />
@@ -22,10 +24,10 @@ function Compare({ before, after }: { before: string; after: string }) {
         style={{ clipPath: `inset(0 ${100 - split}% 0 0)` }}
       />
       <span className="chip-glass absolute top-3 left-3 rounded-full px-3 py-1 text-sm">
-        原本 Before
+        {en1 ? "Before 原本" : "原本 Before"}
       </span>
       <span className="chip-glass absolute top-3 right-3 rounded-full px-3 py-1 text-sm">
-        修復後 After
+        {en1 ? "After 修復後" : "修復後 After"}
       </span>
       <div
         className="pointer-events-none absolute inset-y-0 w-0.5 bg-white"
@@ -139,17 +141,11 @@ export function PhotoStep({ onReady }: { onReady: (photo: Photo) => void }) {
           <span className="[@media(pointer:coarse)]:hidden">
             <ImagePlus aria-hidden size={40} strokeWidth={1.5} />
           </span>
-          <span className="text-center [@media(pointer:fine)]:hidden">
-            <span className="block leading-tight font-semibold">拍照</span>
-            <span lang="en" className="block text-sm text-sub">
-              Take a photo
-            </span>
+          <span className="text-center font-semibold [@media(pointer:fine)]:hidden">
+            <Stack zh="拍照" en="Take a photo" />
           </span>
-          <span className="text-center [@media(pointer:coarse)]:hidden">
-            <span className="block leading-tight font-semibold">選一張照片</span>
-            <span lang="en" className="block text-sm text-sub">
-              Choose a photo from this computer
-            </span>
+          <span className="text-center font-semibold [@media(pointer:coarse)]:hidden">
+            <Stack zh="選一張照片" en="Choose a photo" />
           </span>
         </button>
         <Actions sticky={false}>

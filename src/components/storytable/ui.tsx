@@ -1,12 +1,14 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
+import { usePair } from "@/lib/lang";
 
 /** A screen title: Chinese first, English under it. */
 export function Title({ zh, en }: { zh: ReactNode; en: ReactNode }) {
+  const [main, sub, subLang] = usePair()(zh, en);
   return (
     <div>
-      <h1 className="text-xl font-semibold text-balance">{zh}</h1>
-      <p lang="en" className="mt-1 text-sm text-sub">
-        {en}
+      <h1 className="text-xl font-semibold text-balance">{main}</h1>
+      <p lang={subLang} className="mt-1 text-sm text-sub">
+        {sub}
       </p>
     </div>
   );
@@ -22,11 +24,12 @@ export function Bi({
   en: ReactNode;
   className?: string;
 }) {
+  const [main, sub, subLang] = usePair()(zh, en);
   return (
     <div className={className}>
-      <p>{zh}</p>
-      <p lang="en" className="mt-1 text-sm font-normal text-sub">
-        {en}
+      <p>{main}</p>
+      <p lang={subLang} className="mt-1 text-sm font-normal text-sub">
+        {sub}
       </p>
     </div>
   );
@@ -51,6 +54,7 @@ export function Button({
   disabled,
   ...rest
 }: ButtonProps) {
+  const [main, sub, subLang] = usePair()(zh, en);
   const look =
     variant === "primary"
       ? "bg-ink text-bg hover:opacity-90 disabled:bg-fill disabled:text-sub disabled:opacity-100"
@@ -65,9 +69,9 @@ export function Button({
     >
       {loading ? <Spinner inherit /> : icon}
       <span>
-        <span className="block leading-tight font-semibold">{zh}</span>
-        <span lang="en" className="block text-sm opacity-70">
-          {en}
+        <span className="block leading-tight font-semibold">{main}</span>
+        <span lang={subLang} className="block text-sm opacity-70">
+          {sub}
         </span>
       </span>
     </button>
@@ -133,13 +137,40 @@ export function Working({ zh, en }: { zh: string; en: string }) {
 
 /** Marks bundled sample content so it is never mistaken for a live result. */
 export function Sample({ zh, en }: { zh: string; en: string }) {
+  const [main, sub, subLang] = usePair()(zh, en);
   return (
     <p className="text-sm text-sub">
-      {zh}
-      <span lang="en" className="ml-2">
-        {en}
+      {main}
+      <span lang={subLang} className="ml-2">
+        {sub}
       </span>
     </p>
+  );
+}
+
+/** A short inline pair: the leading language, then the other, muted. */
+export function Two({ zh, en }: { zh: ReactNode; en: ReactNode }) {
+  const [main, sub, subLang] = usePair()(zh, en);
+  return (
+    <>
+      {main}
+      <span lang={subLang} className="ml-2 text-sm font-normal text-sub">
+        {sub}
+      </span>
+    </>
+  );
+}
+
+/** A stacked pair inside something else: leading line, then a small line. */
+export function Stack({ zh, en }: { zh: ReactNode; en: ReactNode }) {
+  const [main, sub, subLang] = usePair()(zh, en);
+  return (
+    <>
+      <span className="block">{main}</span>
+      <span lang={subLang} className="block text-sm font-normal text-sub">
+        {sub}
+      </span>
+    </>
   );
 }
 
@@ -174,10 +205,7 @@ export function Switch({
         />
       </button>
       <span>
-        {zh}
-        <span lang="en" className="ml-2 text-sub">
-          {en}
-        </span>
+        <Two zh={zh} en={en} />
       </span>
     </label>
   );

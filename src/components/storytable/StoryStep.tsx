@@ -2,7 +2,8 @@ import { Download, Share } from "lucide-react";
 import { useState } from "react";
 import { renderCard } from "@/lib/card";
 import type { AnalyzeResult, Names, Photo, Turn } from "@/lib/types";
-import { Actions, Bi, Button, Sample, Title, Working } from "./ui";
+import { useLang } from "@/lib/lang";
+import { Actions, Bi, Button, Sample, Stack, Title, Working } from "./ui";
 
 export function StoryStep({
   photo,
@@ -24,6 +25,7 @@ export function StoryStep({
   const canShare = typeof navigator !== "undefined" && "share" in navigator;
 
   const [working, setWorking] = useState(false);
+  const en1 = useLang().lang === "en";
 
   async function cardFile(): Promise<File | null> {
     if (!result) return null;
@@ -126,21 +128,21 @@ export function StoryStep({
         />
         <div className="px-2 pt-6">
           <h2 className="text-xl font-semibold break-keep [overflow-wrap:anywhere]">
-            {story.title_zh}
+            {en1 ? story.title_en : story.title_zh}
           </h2>
-          <p lang="en" className="mt-1 text-sm text-sub">
-            {story.title_en}
+          <p className="mt-1 text-sm text-sub">
+            {en1 ? story.title_zh : story.title_en}
           </p>
 
           <div className="mt-6 text-lg">
-            {story.lines_zh.map((line, i) => (
+            {(en1 ? story.lines_en : story.lines_zh).map((line, i) => (
               <p key={i} className="text-pretty">
                 {line}
               </p>
             ))}
           </div>
-          <p lang="en" className="mt-2 text-sm text-sub">
-            {story.lines_en.join(" ")}
+          <p className="mt-2 text-sm text-sub">
+            {(en1 ? story.lines_zh : story.lines_en).join(" ")}
           </p>
         </div>
 
@@ -159,10 +161,7 @@ export function StoryStep({
                     {i + 1}
                   </span>
                   <span>
-                    {step}
-                    <span lang="en" className="block text-sm text-sub">
-                      {recipe.steps_en[i]}
-                    </span>
+                    <Stack zh={step} en={recipe.steps_en[i]} />
                   </span>
                 </li>
               ))}

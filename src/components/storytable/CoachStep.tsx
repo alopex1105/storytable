@@ -9,7 +9,7 @@ import type {
   Opener,
   Persona,
 } from "@/lib/types";
-import { Actions, Bi, Button, Title, Working } from "./ui";
+import { Actions, Bi, Button, Stack, Title, Working } from "./ui";
 
 // The family member rehearses how to suggest a check-up. The model plays the
 // parent for four turns, then three opening lines are shown. Nothing is kept.
@@ -85,11 +85,8 @@ export function CoachStep({
               onClick={() => setPersona(key)}
               className="flex min-h-16 items-center justify-between gap-3 rounded-card bg-fill px-5 py-4 text-left transition-[transform,background-color] duration-150 ease-out hover:bg-fill-hover active:scale-[0.98] active:bg-fill-press"
             >
-              <span>
-                <span className="block font-semibold">{PERSONAS[key].zh}</span>
-                <span lang="en" className="block text-sm text-sub">
-                  {PERSONAS[key].en}
-                </span>
+              <span className="font-semibold">
+                <Stack zh={PERSONAS[key].zh} en={PERSONAS[key].en} />
               </span>
               <ChevronRight
                 aria-hidden

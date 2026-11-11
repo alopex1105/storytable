@@ -1,6 +1,8 @@
 import { Moon, Sun } from "lucide-react";
 import { useState } from "react";
+import { useLang } from "@/lib/lang";
 import { currentTheme, setTheme, type Theme } from "@/lib/theme";
+import { Two } from "./ui";
 
 const STEPS = [
   { zh: "同意", en: "Consent" },
@@ -18,6 +20,7 @@ const STEPS = [
 export function StepBar({ current, frame }: { current: number; frame: string }) {
   const step = STEPS[current];
   const [theme, setShown] = useState<Theme>(() => currentTheme());
+  const { lang, toggle: toggleLang } = useLang();
 
   function toggle() {
     const next: Theme = theme === "dark" ? "light" : "dark";
@@ -32,11 +35,16 @@ export function StepBar({ current, frame }: { current: number; frame: string }) 
           <span className="font-semibold">StoryTable 膳心人事</span>
           <span className="flex items-center gap-2">
             <span className="text-sub">
-              {step.zh}
-              <span lang="en" className="ml-2">
-                {step.en}
-              </span>
+              <Two zh={step.zh} en={step.en} />
             </span>
+            <button
+              type="button"
+              onClick={toggleLang}
+              aria-label={lang === "en" ? "改成中文為主" : "Switch to English first"}
+              className="grid h-10 min-w-10 place-items-center rounded-full px-2 font-semibold transition-[transform,background-color] duration-150 ease-out hover:bg-fill active:scale-[0.94] active:bg-fill-press"
+            >
+              {lang === "en" ? "中" : "EN"}
+            </button>
             <button
               type="button"
               onClick={toggle}

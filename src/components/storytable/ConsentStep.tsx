@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { Names } from "@/lib/types";
-import { Actions, Button, Switch, Title } from "./ui";
+import { useLang } from "@/lib/lang";
+import { Actions, Button, Stack, Switch, Title, Two } from "./ui";
 
 export function ConsentStep({
   names,
@@ -16,6 +17,7 @@ export function ConsentStep({
   onAgree: () => void;
 }) {
   const [declined, setDeclined] = useState(false);
+  const { lang } = useLang();
   const child = names.child.trim() || "家人";
   const childEn = names.child.trim() || "your family";
 
@@ -40,6 +42,25 @@ export function ConsentStep({
     );
   }
 
+  const zh = (
+    <>
+      我們會一起看一張老照片，聽您說說當時的故事。AI
+      會幫忙修復照片、把故事整理成卡片，也會留意說話時的一些變化，整理成只給{" "}
+      <strong className="font-semibold">{child}</strong>{" "}
+      看的筆記。照片和錄音都不會被保存。
+    </>
+  );
+  const en = (
+    <>
+      We&rsquo;ll look at an old photo together and listen to your story. AI
+      will help restore the photo and turn the story into a card. It will also
+      notice some changes in how you speak and put them in a note only{" "}
+      <strong className="font-semibold">{childEn}</strong> will see. The photo
+      and the recording are not saved.
+    </>
+  );
+  const lead = lang === "en" ? en : zh;
+
   const input =
     "mt-2 h-14 w-full rounded-full border-hairline border-line-strong bg-surface px-5 transition-[border-color,box-shadow] duration-150 placeholder:text-sub hover:border-sub focus:border-ink focus:shadow-[0_0_0_1px_var(--sand-12)] focus-visible:outline-none";
 
@@ -47,29 +68,22 @@ export function ConsentStep({
     <section className="flex flex-1 flex-col pt-8">
       <Title zh="一起看一張老照片" en="Let's look at an old photo together" />
 
-      <p className="mt-6 leading-[1.75]">
-        我們會一起看一張老照片，聽您說說當時的故事。AI
-        會幫忙修復照片、把故事整理成卡片，也會留意說話時的一些變化，整理成只給{" "}
-        <strong className="font-semibold">{child}</strong>{" "}
-        看的筆記。照片和錄音都不會被保存。
+      <p lang={lead === en ? "en" : undefined} className="mt-6 leading-[1.75]">
+        {lead}
       </p>
-      <p lang="en" className="mt-3 text-sm text-sub">
-        We&rsquo;ll look at an old photo together and listen to your story. AI
-        will help restore the photo and turn the story into a card. It will
-        also notice some changes in how you speak and put them in a note only{" "}
-        {childEn} will see. The photo and the recording are not saved.
+      <p lang={lead === en ? undefined : "en"} className="mt-3 text-sm text-sub">
+        {lead === en ? zh : en}
       </p>
 
       <fieldset className="mt-8">
         <legend className="text-sm text-sub">
-          由家人填寫
-          <span lang="en" className="ml-2">
-            Filled in by family
-          </span>
+          <Two zh="由家人填寫" en="Filled in by family" />
         </legend>
         <div className="mt-3 grid grid-cols-2 gap-3">
           <label className="block">
-            <span className="block text-sm font-semibold">怎麼稱呼長輩</span>
+            <span className="block text-sm font-semibold">
+              <Stack zh="怎麼稱呼長輩" en="Storyteller" />
+            </span>
             <input
               className={input}
               placeholder="爸爸"
@@ -80,7 +94,9 @@ export function ConsentStep({
             />
           </label>
           <label className="block">
-            <span className="block text-sm font-semibold">誰來看筆記</span>
+            <span className="block text-sm font-semibold">
+              <Stack zh="誰來看筆記" en="Who reads the note" />
+            </span>
             <input
               className={input}
               placeholder="Amy"
