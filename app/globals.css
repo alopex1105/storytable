@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+@theme {
+  --color-paper: #faf5ec;
+  --color-card: #fffdf8;
+  --color-ink: #2b2420;
+  --color-sub: #6b6058;
+  --color-line: #e6dccb;
+  --color-accent: #b8472e;
+  --color-accent-deep: #963823;
+  --color-accent-soft: #f7e4d9;
+  --color-leaf: #3f6b57;
+  --color-leaf-soft: #e2eee6;
+  --color-honey: #8a5d0b;
+  --color-honey-soft: #fbefd2;
+
+  --font-sans:
+    "PingFang TC", "Noto Sans TC", "Noto Sans CJK TC", "Microsoft JhengHei",
+    system-ui, sans-serif;
+  --font-serif:
+    "Noto Serif TC", "Noto Serif CJK TC", "Songti TC", "PMingLiU", serif;
+}
+
+html {
+  background: var(--color-paper);
+  color-scheme: light;
+}
+
+body {
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 20px;
+  line-height: 1.6;
+  -webkit-text-size-adjust: 100%;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+@keyframes ring {
+  0% {
+    box-shadow: 0 0 0 0 rgb(184 71 46 / 0.45);
+  }
+  100% {
+    box-shadow: 0 0 0 28px rgb(184 71 46 / 0);
+  }
+}
+
+.mic-live {
+  animation: ring 1.4s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mic-live,
+  .animate-spin {
+    animation: none;
+  }
+}
