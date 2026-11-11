@@ -41,7 +41,7 @@ export function ConsentStep({
   }
 
   const input =
-    "mt-2 h-14 w-full rounded-full border-hairline border-line-strong bg-surface px-5 transition-colors duration-150 placeholder:text-sub hover:border-sub focus:border-ink";
+    "mt-2 h-14 w-full rounded-full border-hairline border-line-strong bg-surface px-5 transition-[border-color,box-shadow] duration-150 placeholder:text-sub hover:border-sub focus:border-ink focus:shadow-[0_0_0_1px_var(--sand-12)] focus-visible:outline-none";
 
   return (
     <section className="flex flex-1 flex-col pt-8">

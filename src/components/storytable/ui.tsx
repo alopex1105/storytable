@@ -60,7 +60,7 @@ export function Button({
       type="button"
       disabled={disabled || loading}
       aria-busy={loading || undefined}
-      className={`flex min-h-14 w-full items-center justify-center gap-3 rounded-full px-6 py-2 text-center transition-[transform,background-color,opacity] duration-150 ease-out active:scale-[0.97] disabled:active:scale-100 md:w-auto md:min-w-52 ${look} ${className}`}
+      className={`flex min-h-14 w-full items-center justify-center gap-3 rounded-full px-6 py-2 text-center transition-[transform,background-color,opacity] duration-150 ease-out active:scale-[0.97] disabled:active:scale-100 ${look} ${className}`}
       {...rest}
     >
       {loading ? <Spinner inherit /> : icon}
@@ -89,15 +89,15 @@ export function Actions({
 }) {
   return (
     <div
-      className={`-mx-5 mt-auto px-5 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] print:hidden md:static md:mx-0 md:px-0 md:pt-8 md:pb-12 ${
+      className={`-mx-5 mt-auto px-5 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] print:hidden md:static md:mx-0 md:mt-10 md:px-0 md:pt-0 md:pb-12 ${
         sticky ? "bar-glass sticky bottom-0 z-10" : ""
       }`}
     >
       <div
         className={
           columns
-            ? "grid grid-cols-[2fr_3fr] gap-3 md:flex md:justify-end"
-            : "flex flex-col gap-3 md:flex-row-reverse md:justify-start"
+            ? "grid grid-cols-[2fr_3fr] gap-3 md:grid-cols-2"
+            : "flex flex-col gap-3 md:flex-row-reverse md:[&>*]:flex-1"
         }
       >
         {children}
@@ -164,12 +164,12 @@ export function Switch({
         aria-label={zh}
         onClick={() => onChange(!on)}
         className={`relative h-8 w-14 shrink-0 rounded-full transition-colors duration-150 ease-out ${
-          on ? "bg-ink" : "bg-fill-press"
+          on ? "bg-ink" : "bg-line-strong"
         }`}
       >
         <span
-          className={`absolute top-1 left-1 size-6 rounded-full bg-surface transition-transform duration-150 ease-out ${
-            on ? "translate-x-6" : ""
+          className={`absolute top-1 left-1 size-6 rounded-full transition-[transform,background-color] duration-150 ease-out ${
+            on ? "translate-x-6 bg-bg" : "bg-white"
           }`}
         />
       </button>

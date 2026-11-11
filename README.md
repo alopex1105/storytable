@@ -46,7 +46,7 @@ StoryTable stays an awareness and communication tool. It does not screen or diag
 
 ## Privacy
 
-No accounts, no analytics, nothing stored. Photos and transcripts live in browser memory and are gone on refresh. Everyone in the demo is fictional, and the demo photo is an illustration.
+No accounts, no analytics. Photos and transcripts live in browser memory and are gone on refresh. The only thing kept on the device is the light or dark theme choice. Everyone in the demo is fictional, and the demo photo is an illustration.
 
 ## Sources
 

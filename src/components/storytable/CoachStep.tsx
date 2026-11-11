@@ -204,7 +204,7 @@ export function CoachStep({
           <label className="mt-6 block">
             <span className="sr-only">你想說的話</span>
             <textarea
-              className="block min-h-28 w-full rounded-card border-hairline border-line-strong bg-surface p-4 transition-colors duration-150 placeholder:text-sub hover:border-sub focus:border-ink"
+              className="block min-h-28 w-full rounded-card border-hairline border-line-strong bg-surface p-4 transition-[border-color,box-shadow] duration-150 placeholder:text-sub hover:border-sub focus:border-ink focus:shadow-[0_0_0_1px_var(--sand-12)] focus-visible:outline-none"
               placeholder={`對${names.elder}說說看，例如：我想跟您聊一件事`}
               value={draft}
               onChange={(e) => setDraft(e.target.value)}

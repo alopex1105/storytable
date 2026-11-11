@@ -94,17 +94,19 @@ export default function Index() {
     setFailed(false);
   }
 
-  // The talk and photo screens use two columns on a wide screen.
+  // The talk and photo screens use two columns on a wide screen. The top bar
+  // takes the same width as the page, so their edges line up.
   const wide = step === "talk" || step === "photo";
+  const frame = wide
+    ? "max-w-[480px] md:max-w-[640px] lg:max-w-[1000px]"
+    : "max-w-[480px] md:max-w-[640px]";
 
   return (
     <div className="flex min-h-dvh flex-col print:block print:min-h-0">
-      <StepBar current={BAR[step]} />
+      <StepBar current={BAR[step]} frame={frame} />
       <main
         key={step}
-        className={`enter mx-auto flex w-full max-w-[480px] flex-1 flex-col px-5 md:px-8 print:block print:max-w-none print:px-0 ${
-          wide ? "md:max-w-[640px] lg:max-w-[1000px]" : "md:max-w-[640px]"
-        }`}
+        className={`enter mx-auto flex w-full flex-1 flex-col px-5 md:px-8 print:block print:max-w-none print:px-0 ${frame}`}
       >
       {step === "consent" && (
         <ConsentStep

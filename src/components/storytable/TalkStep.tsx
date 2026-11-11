@@ -245,7 +245,7 @@ export function TalkStep({
           <label className="mt-6 block">
             <span className="sr-only">您的回答</span>
             <textarea
-              className="block min-h-28 w-full rounded-card border-hairline border-line-strong bg-surface p-4 transition-colors duration-150 placeholder:text-sub hover:border-sub focus:border-ink"
+              className="block min-h-28 w-full rounded-card border-hairline border-line-strong bg-surface p-4 transition-[border-color,box-shadow] duration-150 placeholder:text-sub hover:border-sub focus:border-ink focus:shadow-[0_0_0_1px_var(--sand-12)] focus-visible:outline-none"
               placeholder="說的話會出現在這裡，也可以直接打字"
               value={answer}
               onChange={(e) => setAnswer(e.target.value)}

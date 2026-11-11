@@ -41,51 +41,77 @@ export function createRecognition(lang = "zh-TW"): Recognition | null {
   return rec;
 }
 
+function synth(): SpeechSynthesis | null {
+  return typeof window !== "undefined" && "speechSynthesis" in window
+    ? window.speechSynthesis
+    : null;
+}
+
+// Browsers can drop an utterance that nothing refers to before it is spoken.
+let current: SpeechSynthesisUtterance | null = null;
+let primed = false;
+
+/** The most natural zh-TW voice this device offers, if any. */
+function pickVoice(engine: SpeechSynthesis): SpeechSynthesisVoice | undefined {
+  const voices = engine
+    .getVoices()
+    .filter((v) => v.lang.replace("_", "-").toLowerCase() === "zh-tw");
+  const score = (v: SpeechSynthesisVoice) =>
+    (/premium|enhanced|natural|siri/i.test(v.name) ? 2 : 0) +
+    (/google/i.test(v.name) ? 1 : 0);
+  return voices.sort((a, b) => score(b) - score(a))[0];
+}
+
 /**
- * Call from a tap. Phones only let a page speak if the first utterance starts
- * inside a user gesture; the questions arrive later, after a network call.
+ * Call from a tap. Phones only let a page speak once an utterance has
+ * started inside a user gesture, and the questions arrive later, after a
+ * network call. One real syllable at zero volume does it; an empty or
+ * blank utterance can stall the speech queue in some browsers.
  */
 export function primeSpeech() {
-  if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+  const engine = synth();
+  if (!engine || primed) return;
+  primed = true;
   try {
-    const silent = new SpeechSynthesisUtterance(" ");
-    silent.volume = 0;
-    window.speechSynthesis.speak(silent);
+    const quiet = new SpeechSynthesisUtterance("嗯");
+    quiet.lang = "zh-TW";
+    quiet.volume = 0;
+    quiet.rate = 2;
+    current = quiet;
+    engine.speak(quiet);
   } catch {
     // reading aloud is optional
   }
 }
 
 export function stopSpeaking() {
-  if (typeof window !== "undefined" && "speechSynthesis" in window) {
-    window.speechSynthesis.cancel();
-  }
+  const engine = synth();
+  if (engine && (engine.speaking || engine.pending)) engine.cancel();
 }
 
 /** Reads text aloud. Resolves when it finishes, or at once if unsupported. */
 export function speak(text: string, lang = "zh-TW"): Promise<void> {
   return new Promise((resolve) => {
-    if (
-      !text ||
-      typeof window === "undefined" ||
-      !("speechSynthesis" in window)
-    ) {
+    const engine = synth();
+    if (!text || !engine) {
       resolve();
       return;
     }
     try {
-      const synth = window.speechSynthesis;
-      synth.cancel();
+      const busy = engine.speaking || engine.pending;
+      if (busy) engine.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = lang;
       utterance.rate = 0.9;
-      const voice = synth
-        .getVoices()
-        .find((v) => v.lang.replace("_", "-").toLowerCase() === "zh-tw");
+      utterance.volume = 1;
+      const voice = pickVoice(engine);
       if (voice) utterance.voice = voice;
       utterance.onend = () => resolve();
       utterance.onerror = () => resolve();
-      synth.speak(utterance);
+      current = utterance;
+      // Speaking straight after a cancel is dropped by some browsers.
+      if (busy) setTimeout(() => engine.speak(utterance), 120);
+      else engine.speak(utterance);
     } catch {
       resolve();
     }
