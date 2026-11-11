@@ -74,7 +74,7 @@ Deno.serve(async (request) => {
       user,
       name: "next_question",
       schema: QUESTION_SCHEMA,
-      timeoutMs: 15_000,
+      timeoutMs: 20_000,
     });
     const question = String(asked.question_zh ?? "").trim();
     const ack = String(asked.ack_zh ?? "").trim();

@@ -50,5 +50,5 @@ Deno.serve(async (request) => {
   const early = preflight(request);
   if (early) return early;
   const [openai, gmi] = await Promise.all([checkOpenAI(), checkGmi()]);
-  return json({ openai, gmi, model: MODEL });
+  return json({ openai, gmi, model: MODEL, build: "2026-11-11b" });
 });

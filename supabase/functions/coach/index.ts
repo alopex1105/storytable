@@ -101,7 +101,7 @@ Deno.serve(async (request) => {
       ],
       name: "coach_turn",
       schema: COACH_SCHEMA,
-      timeoutMs: 20_000,
+      timeoutMs: 40_000,
       model: Deno.env.get("OPENAI_MODEL_FAST") || undefined,
     });
 

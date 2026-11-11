@@ -9,7 +9,7 @@ export const DEMO_PHOTO_RESTORED = "/demo/old-photo-restored.jpg";
 
 export const DEMO_ANSWERS = [
   "這是我…那個…那個每天煮飯給我們吃的…她叫…哎呀，一時想不起來。",
-  "我們結婚那年，1975 年，在台南。",
+  "我們 1975 年結婚那天拍的…這張是 1990 年在台南拍的結婚照。",
   "滷肉，她滷肉最好吃。",
   "五花肉切塊，下鍋炒一炒，加醬油，再加冰糖，然後…再加醬油，加水滷一個小時。",
 ];
@@ -36,13 +36,13 @@ export const SAMPLE_RECORDED: Recorded = {
       confidence: "high",
     },
     {
-      type: "word_finding",
-      turn: 1,
-      quote: "這是我…那個…那個每天煮飯給我們吃的…",
-      why_zh: "想說「太太」時停了幾次，改用描述帶過。",
+      type: "time_place",
+      turn: 2,
+      quote: "我們 1975 年結婚那天拍的…這張是 1990 年在台南拍的結婚照。",
+      why_zh: "先說照片是 1975 年結婚當天拍的，接著又說是 1990 年拍的。",
       why_en:
-        "He pauses several times looking for the word “wife” and describes her instead.",
-      confidence: "medium",
+        "He first says the photo was taken on his wedding day in 1975, then says it was taken in 1990.",
+      confidence: "high",
     },
     {
       type: "sequence",
@@ -55,15 +55,15 @@ export const SAMPLE_RECORDED: Recorded = {
   ],
   possible_hearing_issue: false,
   story: {
-    title_zh: "1975 年，台南的滷肉香",
-    title_en: "1975, Tainan, and the smell of braised pork",
+    title_zh: "台南的滷肉香",
+    title_en: "Tainan and the smell of braised pork",
     lines_zh: [
-      "1975 年，我們在台南結婚。",
+      "這是在台南拍的結婚照。",
       "她每天煮飯給全家人吃，",
       "滷肉是她最拿手的一道。",
     ],
     lines_en: [
-      "In 1975 we got married in Tainan.",
+      "This is our wedding photo, taken in Tainan.",
       "She cooked for the whole family every day,",
       "and her braised pork was the best.",
     ],

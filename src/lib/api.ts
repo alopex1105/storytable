@@ -90,7 +90,7 @@ export async function coachReply(input: {
   names: Names;
 }): Promise<CoachResponse> {
   try {
-    const data = await call<CoachResponse>("coach", input, 25_000);
+    const data = await call<CoachResponse>("coach", input, 45_000);
     if (typeof data.done === "boolean" && Array.isArray(data.openers)) return data;
   } catch {
     // fall through to the fixed lines
