@@ -32,7 +32,7 @@ export function PhotoStep({ onReady }: { onReady: (photo: Photo) => void }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ image: original }),
-        signal: AbortSignal.timeout(40_000),
+        signal: AbortSignal.timeout(50_000),
       });
       const data = await response.json();
       if (typeof data.restoredUrl === "string") restored = data.restoredUrl;

@@ -6,10 +6,10 @@ export const maxDuration = 60;
 
 const QUEUE =
   "https://console.gmicloud.ai/api/v1/ie/requestqueue/apikey/requests";
-const MODEL = "seededit-3-0-i2i-250628";
-const PROMPT =
-  "Restore this old family photo: remove scratches, dust and fading, sharpen faces gently, colorize naturally. Keep every person, pose and background unchanged.";
-const GIVE_UP_MS = 25_000;
+// bria-fibo-restore is GMI's purpose-built restoration model: it takes only the
+// image. (seededit-3-0-i2i-250628 was failing on GMI's side on event night.)
+const MODEL = "bria-fibo-restore";
+const GIVE_UP_MS = 35_000;
 const POLL_MS = 1_500;
 
 const FALLBACK = { restoredUrl: null, fallback: true };
@@ -38,12 +38,7 @@ export async function POST(request: Request) {
       headers,
       body: JSON.stringify({
         model: MODEL,
-        payload: {
-          image: image.replace(/^data:image\/\w+;base64,/, ""),
-          prompt: PROMPT,
-          add_watermark: false,
-          response_format: "url",
-        },
+        payload: { image: image.replace(/^data:image\/\w+;base64,/, "") },
       }),
       signal: AbortSignal.timeout(left()),
     });

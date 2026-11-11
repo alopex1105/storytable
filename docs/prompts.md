@@ -2,6 +2,12 @@
 
 Source: section 6 of the MVP plan. `lib/awareness.ts` is the implementation of the rules below.
 
+What runs differs from the plan text below in three ways:
+
+- The prompts in use are in `lib/prompts.ts`. `claude-sonnet-5-5` does not accept a forced tool call, so both calls return structured JSON instead of calling `next_question` or `record_session`.
+- The interview answer has two extra fields, `ack_zh` and `ack_en`, for the one-line reply before each question.
+- The note shows the helpline as 「關懷專線 0800-474-580」, because its full name contains a word the note never uses.
+
 AI 只負責問問題和標記片段；筆記的等級和措辭由固定規則決定。門檻是 MVP 暫定，正式使用前要請神經科醫師確認。
 
 **訪談提示詞**（`/api/interview` 的 system prompt）
